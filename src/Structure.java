@@ -7,7 +7,7 @@
  *
  * @author jonathan
  */
-public class StructureParser {
+public class Structure {
 	private static int getX(Location loc) {
 		return (int)Math.floor(loc.getZ());
 	}
@@ -31,7 +31,9 @@ public class StructureParser {
 	 * @param playerLocation
 	 * @return
 	 */
-	public static boolean validate(BlockTypeEnum[][][] pattern, int[] startPosition, Location playerLocation) {
+	public static boolean validate(BlockTypeEnum[][][] pattern, 
+					int[] startPosition,
+					Location playerLocation) {
 		int thisZ, thisX, thisY;
 		Location thisLocation = new Location(playerLocation.getX(), playerLocation.getY(), playerLocation.getZ());
 
@@ -50,24 +52,24 @@ public class StructureParser {
 		for( int z = 0; z < pattern.length; z++ ){
 			for( int y = 0; y < pattern[z].length; y++ ) {
 				for( int x = 0; x < pattern[z][y].length; x++ ) {
-					thisZ = StructureParser.getZ(playerLocation)+(z-startPosition[0]);
-					thisY = StructureParser.getY(playerLocation)+(y-startPosition[1]);
-					thisX = StructureParser.getX(playerLocation)+(x-startPosition[2]);
+					thisZ = Structure.getZ(playerLocation)+(z-startPosition[0]);
+					thisY = Structure.getY(playerLocation)+(y-startPosition[1]);
+					thisX = Structure.getX(playerLocation)+(x-startPosition[2]);
 					thisLocation.setX(thisY);
 					thisLocation.setY(thisZ);
 					thisLocation.setZ(thisX);
 
-					if( World.getBlock(thisLocation).getEnum() != pattern[z][y][x] && pattern[z][y][x] != BlockTypeEnum.BEDROCK ) {
-						Waypoints.player.sendChat(String.format("Expected %s at %d,%d,%d, found %s",
-							pattern[z][y][x].toString(), z, y, x,
-							World.getBlock(thisLocation).getEnum().toString()));
+					if( World.getBlock(thisLocation).getEnum() != pattern[z][y][x] &&
+									pattern[z][y][x] != BlockTypeEnum.BEDROCK ) {
+						
+						//Waypoints.player.sendChat(String.format("Expected %s at %d,%d,%d, found %s",
+						//	pattern[z][y][x].toString(), z, y, x,
+						//	World.getBlock(thisLocation).getEnum().toString()));
 						return false;
 					}
 				}
 			}
 		}
-
-
 		return true;		
 	}
 

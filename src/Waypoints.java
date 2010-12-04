@@ -11,15 +11,8 @@
  */
 
 public class Waypoints extends Mod {
-	protected int[] homePointStart = new int[] {0,1,1};
-	protected BlockTypeEnum[][][] homePointPattern = new BlockTypeEnum[][][] {
-		{
-			{BlockTypeEnum.OBSIDIAN, BlockTypeEnum.OBSIDIAN, BlockTypeEnum.OBSIDIAN},
-			{BlockTypeEnum.OBSIDIAN, BlockTypeEnum.DIAMOND_BLOCK, BlockTypeEnum.OBSIDIAN},
-			{BlockTypeEnum.OBSIDIAN, BlockTypeEnum.OBSIDIAN, BlockTypeEnum.OBSIDIAN},
-		}
-	};
-
+	protected static HomeList homelist;
+	
 	protected int[] wayPointStart = new int[] {0, 1, 1};
 	protected BlockTypeEnum[][][] wayPointPattern = new BlockTypeEnum[][][] {
 		{
@@ -46,27 +39,30 @@ public class Waypoints extends Mod {
 	
 	public static Player player;
 
+	@Override
+	public void activate() {
+		Waypoints.homelist = new HomeList();
+		Waypoints.homelist.load();
+	}
 
 	protected boolean parseCommand(Player player, String[] tokens) {
 		Waypoints.player = player;
 		String command = tokens[0].substring(1);
 
-		if( command.equalsIgnoreCase("home") ) {
-			player.sendChat("Returned Home");
+		if( command.equalsIgnoreCase("help") ) {
+			player.sendChat("Waypoints: !home, !sethome, !unsethome");
 			return true;
-		} else if( command.equalsIgnoreCase("h") ) {
-			if( StructureParser.validate(homePointPattern, homePointStart, player.getLocation()) ) {
-				player.sendChat("VALID home point");
-			} else {
-				player.sendChat("INVALID home point");
-			}
+		}
+		else if(command.equalsIgnoreCase("home")) {
+			Waypoints.homelist.sendPlayerHome(player);
 			return true;
-		} else if( command.equalsIgnoreCase("a") ) {
-			if( StructureParser.validate(wayPointPattern, wayPointStart, player.getLocation()) ) {
-				player.sendChat("VALID waypoint");
-			} else {
-				player.sendChat("INVALID waypoint");
-			}
+		}
+		else if( command.equalsIgnoreCase("sethome") ) {
+			Waypoints.homelist.setUserHomePoint(player);
+			return true;
+		}
+		else if( command.equalsIgnoreCase("unsethome") ) {
+			Waypoints.homelist.unsetUserHomePoint(player);
 			return true;
 		}
 
@@ -83,7 +79,6 @@ public class Waypoints extends Mod {
 	public boolean onPlayerCommand(Player player, String[] command) {
 		return this.parseCommand(player, command);
 	}
-
 	
 	protected boolean isValidWaygate(Location loc, Player player) {
 		Location startLoc = new Location(loc.getX(), loc.getY()-1, loc.getZ());
