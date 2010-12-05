@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author jonathan
@@ -18,7 +13,29 @@ public class Structure {
 		// Subtract one, as we always use the block beneath the player's feet.
 		return (int)Math.floor(loc.getY())-1;
 	}
+	public static BlockTypeEnum nonEvalBlock = BlockTypeEnum.BEDROCK;
 
+	public interface Actor {
+		public boolean doBlockAction(BlockTypeEnum structureBlockType,
+						Block worldBlock);
+	}
+
+	public static class Validator implements Actor {
+		public int invalidBlockCount;
+		public Validator() {
+			invalidBlockCount = 0;
+		}
+		public boolean doBlockAction(BlockTypeEnum structureBlockType,
+							Block worldBlock) {
+			if( worldBlock.getEnum() != structureBlockType &&
+					structureBlockType != Structure.nonEvalBlock ) {
+				invalidBlockCount += 1;
+				return false;
+			}
+			return true;
+		}
+	}
+	
 	/**
 	 * NOTE:
 	 * Altitude -> Y
@@ -31,9 +48,9 @@ public class Structure {
 	 * @param playerLocation
 	 * @return
 	 */
-	public static boolean validate(BlockTypeEnum[][][] pattern, 
+	public static void parse(BlockTypeEnum[][][] pattern,
 					int[] startPosition,
-					Location playerLocation) {
+					Location playerLocation, Actor callBack) {
 		int thisZ, thisX, thisY;
 		Location thisLocation = new Location(playerLocation.getX(), playerLocation.getY(), playerLocation.getZ());
 
@@ -59,18 +76,13 @@ public class Structure {
 					thisLocation.setY(thisZ);
 					thisLocation.setZ(thisX);
 
-					if( World.getBlock(thisLocation).getEnum() != pattern[z][y][x] &&
-									pattern[z][y][x] != BlockTypeEnum.BEDROCK ) {
-						
-						//Waypoints.player.sendChat(String.format("Expected %s at %d,%d,%d, found %s",
-						//	pattern[z][y][x].toString(), z, y, x,
-						//	World.getBlock(thisLocation).getEnum().toString()));
-						return false;
-					}
+					boolean continueLoop = (null == callBack) ? true :
+						callBack.doBlockAction(pattern[z][y][x], World.getBlock(thisLocation));
+					
+					if( !continueLoop ) return;
 				}
 			}
 		}
-		return true;		
 	}
 
 }

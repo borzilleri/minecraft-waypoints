@@ -27,14 +27,19 @@ public class HomeList extends FileLoader {
 		if( !hasHomePoint(player) ) {
 			player.sendChat("*** Returning to Spawn Point ***", ColorEnum.Gold);
 			player.setLocation(World.getSpawnLocation());
+			return;
 		}
-		else if( Structure.validate(homePointPattern, homePointStart, homes.get(player.getName())) ) {
+
+		Structure.Validator validator = new Structure.Validator();
+		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), validator);
+
+		if( 0 >= validator.invalidBlockCount ) {
 			player.sendChat("*** Returning Home ***", ColorEnum.Gold);
 			player.setLocation(homes.get(player.getName()));
+			return;
 		}
-		else {
-			player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
-		}
+
+		player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
 	}
 
 	public void unsetUserHomePoint(Player player) {
@@ -43,7 +48,11 @@ public class HomeList extends FileLoader {
 			player.sendChat("ERROR: No active home point.", ColorEnum.Red);
 			return;
 		}
-		if( !Structure.validate(homePointPattern, homePointStart, homes.get(player.getName())) ) {
+
+		Structure.Validator validator = new Structure.Validator();
+		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), validator);
+		
+		if( 0 < validator.invalidBlockCount ) {
 			// Player's home point is invalid
 			player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
 			return;
@@ -53,17 +62,34 @@ public class HomeList extends FileLoader {
 			player.sendChat("ERROR: Must be standing at your home point.", ColorEnum.Red);
 			return;
 		}
+		
+		// Remove the blocks from the world.
+		Structure.Actor remover = new Structure.Actor() {
+			public boolean doBlockAction(BlockTypeEnum structureBlockType,
+							Block worldBlock) {
+				World.setBlock(worldBlock.getLocation(), BlockTypeEnum.AIR);
+				return true;
+			}
+		};
+		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), remover);
 
 		// Remove home point from the list, and save the list.
 		homes.remove(player.getName());
 		save();
 
-		// Remove the blocks from the world.
 		player.sendChat("*** Deactivating Home Point ***", ColorEnum.Gold);
 	}
 	
 	public void setUserHomePoint(Player player) {
-		if( Structure.validate(homePointPattern, homePointStart, player.getLocation()) ) {
+		if( homes.containsKey(player.getName()) ) {
+			player.sendChat("Error: Home Point already active.", ColorEnum.Red);
+			return;
+		}
+		
+		Structure.Validator validator = new Structure.Validator();
+		Structure.parse(homePointPattern, homePointStart, player.getLocation(), validator);
+
+		if( 0 >= validator.invalidBlockCount ) {
 			addHomePoint(player.getName(),
 				Math.floor(player.getLocation().getX()),
 				Math.floor(player.getLocation().getY()),
