@@ -49,11 +49,7 @@ public class Waypoints extends Mod {
 		Waypoints.player = player;
 		String command = tokens[0].substring(1);
 
-		if( command.equalsIgnoreCase("help") ) {
-			player.sendChat("Waypoints: !home, !sethome, !unsethome");
-			return true;
-		}
-		else if(command.equalsIgnoreCase("home")) {
+		if(command.equalsIgnoreCase("home")) {
 			Waypoints.homelist.sendPlayerHome(player);
 			return true;
 		}
@@ -67,6 +63,11 @@ public class Waypoints extends Mod {
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "!home, !sethome, !unsethome";
 	}
 
 	@Override

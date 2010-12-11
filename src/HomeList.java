@@ -26,6 +26,7 @@ public class HomeList extends FileLoader {
 	public void sendPlayerHome(Player player) {
 		if( !hasHomePoint(player) ) {
 			player.sendChat("*** Returning to Spawn Point ***", ColorEnum.Gold);
+			loadLocationChunk(World.getSpawnLocation());
 			player.setLocation(World.getSpawnLocation());
 			return;
 		}
@@ -35,11 +36,17 @@ public class HomeList extends FileLoader {
 
 		if( 0 >= validator.invalidBlockCount ) {
 			player.sendChat("*** Returning Home ***", ColorEnum.Gold);
-			player.setLocation(homes.get(player.getName()));
+			loadLocationChunk(homes.get(player.getName()));
+			player.setLocation(new Location(homes.get(player.getName())));
 			return;
 		}
 
 		player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
+	}
+	protected void loadLocationChunk(Location loc) {
+		if( !World.isChunkLoaded(loc) ) {
+			World.loadChunk(loc);
+		}
 	}
 
 	public void unsetUserHomePoint(Player player) {
@@ -91,9 +98,9 @@ public class HomeList extends FileLoader {
 
 		if( 0 >= validator.invalidBlockCount ) {
 			addHomePoint(player.getName(),
-				Math.floor(player.getLocation().getX()),
-				Math.floor(player.getLocation().getY()),
-				Math.floor(player.getLocation().getZ())
+				player.getLocation().getX(),
+				player.getLocation().getY(),
+				player.getLocation().getZ()
 			);
 			save();
 			player.sendChat("*** Activating Home Point ***", ColorEnum.Gold);
@@ -153,10 +160,10 @@ public class HomeList extends FileLoader {
 		
 		for( Map.Entry<String,Location> homePoint: homes.entrySet() ) {
 			thisLoc = homePoint.getValue();
-			line += String.format("%s:%.0f;%.0f;%.0f;\r\n", homePoint.getKey(),
-				Math.floor(thisLoc.getX()),
-				Math.floor(thisLoc.getY()),
-				Math.floor(thisLoc.getZ())
+			line += String.format("%s:%f;%f;%f;\r\n", homePoint.getKey(),
+				thisLoc.getX(),
+				thisLoc.getY(),
+				thisLoc.getZ()
 			);
 		}
 		
