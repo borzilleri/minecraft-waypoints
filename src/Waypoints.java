@@ -49,21 +49,21 @@ public class Waypoints extends Mod {
 
 	protected boolean parseCommand(Player player, String[] tokens) {
 		Waypoints.player = player;
-		String command = tokens[0].substring(1);
+		String command = tokens[0];
 
-		if(command.equalsIgnoreCase("home")) {
+		if(command.equalsIgnoreCase("!home")) {
 			Waypoints.homelist.sendPlayerHome(player);
 			return true;
 		}
-		else if( command.equalsIgnoreCase("sethome") ) {
+		else if( command.equalsIgnoreCase("!sethome") ) {
 			Waypoints.homelist.setUserHomePoint(player);
 			return true;
 		}
-		else if( command.equalsIgnoreCase("unsethome") ) {
+		else if( command.equalsIgnoreCase("!unsethome") ) {
 			Waypoints.homelist.unsetUserHomePoint(player);
 			return true;
 		}
-		else if( command.equalsIgnoreCase("setgate") ) {
+		else if( command.equalsIgnoreCase("!setgate") ) {
 			if( !player.isAdmin() ) return false;
 			if( 2 <= tokens.length ) {
 				Waypoints.gatelist.setGate(tokens[1], player);
@@ -73,7 +73,7 @@ public class Waypoints extends Mod {
 			}
 			return true;
 		}
-		else if( command.equalsIgnoreCase("gateto") ) {
+		else if( command.equalsIgnoreCase("!gateto") ) {
 			if( !player.isAdmin() ) return false;
 			if( 2 <= tokens.length ) {
 				Waypoints.gatelist.sendPlayerToGate(player, tokens[1]);
@@ -83,10 +83,16 @@ public class Waypoints extends Mod {
 			}
 			return true;
 		}
-		else if( command.equalsIgnoreCase("gates") ) {
+		else if( command.equalsIgnoreCase("!gates") ) {
 			Waypoints.gatelist.listGates(player);
 			return true;
 		}
+		else if( command.equalsIgnoreCase("!help") ) {
+			player.sendChat(Color.LightGray.getFormat() + this.getClass().getName() + ": " +
+							Color.White.getFormat() + toString() );
+			return true;
+		}
+
 
 		return false;
 	}
@@ -100,7 +106,7 @@ public class Waypoints extends Mod {
 
 	@Override
 	public String toString() {
-		return "!home, !sethome, !unsethome";
+		return "!home, !sethome, !unsethome, !gates, !gateto <name>";
 	}
 
 	@Override
