@@ -54,6 +54,8 @@ public class Structure {
 		int thisZ, thisX, thisY;
 		Location thisLocation = new Location(playerLocation.getX(), playerLocation.getY(), playerLocation.getZ());
 
+		Waypoints.loadChunkAtLocation(thisLocation);
+
 		/**
 		 * This ugly loop iterates over every value of the pattern.
 		 * We'll use the startPosition to calculate it's relative location from the

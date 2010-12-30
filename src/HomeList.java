@@ -26,7 +26,7 @@ public class HomeList extends FileLoader {
 	public void sendPlayerHome(Player player) {
 		if( !hasHomePoint(player) ) {
 			player.sendChat("*** Returning to Spawn Point ***", Color.Gold);
-			loadLocationChunk(World.getSpawnLocation());
+			Waypoints.loadChunkAtLocation(World.getSpawnLocation());
 			player.setLocation(World.getSpawnLocation());
 			return;
 		}
@@ -36,17 +36,12 @@ public class HomeList extends FileLoader {
 
 		if( 0 >= validator.invalidBlockCount ) {
 			player.sendChat("*** Returning Home ***", Color.Gold);
-			loadLocationChunk(homes.get(player.getName()));
+			Waypoints.loadChunkAtLocation(homes.get(player.getName()));
 			player.setLocation(new Location(homes.get(player.getName())));
 			return;
 		}
 
 		player.sendChat("ERROR: Home point is invalid.", Color.Red);
-	}
-	protected void loadLocationChunk(Location loc) {
-		if( !World.isChunkLoaded(loc) ) {
-			World.loadChunk(loc);
-		}
 	}
 
 	public void unsetUserHomePoint(Player player) {

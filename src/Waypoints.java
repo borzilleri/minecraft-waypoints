@@ -91,6 +91,13 @@ public class Waypoints extends Mod {
 		return false;
 	}
 
+	public static void loadChunkAtLocation(Location loc) {
+		if( !World.isChunkLoaded(loc) ) {
+			World.loadChunk(loc);
+		}
+	}
+
+
 	@Override
 	public String toString() {
 		return "!home, !sethome, !unsethome";
