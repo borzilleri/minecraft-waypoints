@@ -10,11 +10,11 @@ import java.util.Map;
 public class HomeList extends FileLoader {
 	protected LinkedHashMap<String,Location> homes;
 	protected int[] homePointStart = new int[] {0,1,1};
-	protected BlockTypeEnum[][][] homePointPattern = new BlockTypeEnum[][][] {
+	protected BlockType[][][] homePointPattern = new BlockType[][][] {
 		{
-			{BlockTypeEnum.GLASS, BlockTypeEnum.GLASS, BlockTypeEnum.GLASS},
-			{BlockTypeEnum.GLASS, BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.GLASS},
-			{BlockTypeEnum.GLASS, BlockTypeEnum.GLASS, BlockTypeEnum.GLASS},
+			{BlockType.GLASS, BlockType.GLASS, BlockType.GLASS},
+			{BlockType.GLASS, BlockType.IRON_BLOCK, BlockType.GLASS},
+			{BlockType.GLASS, BlockType.GLASS, BlockType.GLASS},
 		}
 	};
 	
@@ -25,7 +25,7 @@ public class HomeList extends FileLoader {
 
 	public void sendPlayerHome(Player player) {
 		if( !hasHomePoint(player) ) {
-			player.sendChat("*** Returning to Spawn Point ***", ColorEnum.Gold);
+			player.sendChat("*** Returning to Spawn Point ***", Color.Gold);
 			loadLocationChunk(World.getSpawnLocation());
 			player.setLocation(World.getSpawnLocation());
 			return;
@@ -35,13 +35,13 @@ public class HomeList extends FileLoader {
 		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), validator);
 
 		if( 0 >= validator.invalidBlockCount ) {
-			player.sendChat("*** Returning Home ***", ColorEnum.Gold);
+			player.sendChat("*** Returning Home ***", Color.Gold);
 			loadLocationChunk(homes.get(player.getName()));
 			player.setLocation(new Location(homes.get(player.getName())));
 			return;
 		}
 
-		player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
+		player.sendChat("ERROR: Home point is invalid.", Color.Red);
 	}
 	protected void loadLocationChunk(Location loc) {
 		if( !World.isChunkLoaded(loc) ) {
@@ -52,7 +52,7 @@ public class HomeList extends FileLoader {
 	public void unsetUserHomePoint(Player player) {
 		if( !hasHomePoint(player) ) {
 			// Player has no active home point.
-			player.sendChat("ERROR: No active home point.", ColorEnum.Red);
+			player.sendChat("ERROR: No active home point.", Color.Red);
 			return;
 		}
 
@@ -61,20 +61,20 @@ public class HomeList extends FileLoader {
 		
 		if( 0 < validator.invalidBlockCount ) {
 			// Player's home point is invalid
-			player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
+			player.sendChat("ERROR: Home point is invalid.", Color.Red);
 			return;
 		}
 		if( !playerAtHomePoint(player) ) {
 			// Player is not located at his home point.
-			player.sendChat("ERROR: Must be standing at your home point.", ColorEnum.Red);
+			player.sendChat("ERROR: Must be standing at your home point.", Color.Red);
 			return;
 		}
 		
 		// Remove the blocks from the world.
 		Structure.Actor remover = new Structure.Actor() {
-			public boolean doBlockAction(BlockTypeEnum structureBlockType,
+			public boolean doBlockAction(BlockType structureBlockType,
 							Block worldBlock) {
-				World.setBlock(worldBlock.getLocation(), BlockTypeEnum.AIR);
+				World.setBlock(worldBlock.getLocation(), BlockType.AIR);
 				return true;
 			}
 		};
@@ -84,12 +84,12 @@ public class HomeList extends FileLoader {
 		homes.remove(player.getName());
 		save();
 
-		player.sendChat("*** Deactivating Home Point ***", ColorEnum.Gold);
+		player.sendChat("*** Deactivating Home Point ***", Color.Gold);
 	}
 	
 	public void setUserHomePoint(Player player) {
 		if( homes.containsKey(player.getName()) ) {
-			player.sendChat("Error: Home Point already active.", ColorEnum.Red);
+			player.sendChat("Error: Home Point already active.", Color.Red);
 			return;
 		}
 		
@@ -103,10 +103,10 @@ public class HomeList extends FileLoader {
 				player.getLocation().getZ()
 			);
 			save();
-			player.sendChat("*** Activating Home Point ***", ColorEnum.Gold);
+			player.sendChat("*** Activating Home Point ***", Color.Gold);
 		}
 		else {
-			player.sendChat("ERROR: Home point is invalid.", ColorEnum.Red);
+			player.sendChat("ERROR: Home point is invalid.", Color.Red);
 		}		
 	}
 

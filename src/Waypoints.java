@@ -9,31 +9,31 @@
  *
  * @author jonathan
  */
-
 public class Waypoints extends Mod {
 	protected static HomeList homelist;
+	protected static GateList gatelist;
 	
 	protected int[] wayPointStart = new int[] {0, 1, 1};
-	protected BlockTypeEnum[][][] wayPointPattern = new BlockTypeEnum[][][] {
+	protected BlockType[][][] wayPointPattern = new BlockType[][][] {
 		{
-			{BlockTypeEnum.OBSIDIAN, BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.OBSIDIAN},
-			{BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.GOLD_BLOCK, BlockTypeEnum.IRON_BLOCK},
-			{BlockTypeEnum.OBSIDIAN, BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.OBSIDIAN}
+			{BlockType.OBSIDIAN, BlockType.IRON_BLOCK, BlockType.OBSIDIAN},
+			{BlockType.IRON_BLOCK, BlockType.GOLD_BLOCK, BlockType.IRON_BLOCK},
+			{BlockType.OBSIDIAN, BlockType.IRON_BLOCK, BlockType.OBSIDIAN}
 		},
 		{
-			{BlockTypeEnum.AIR, BlockTypeEnum.AIR, BlockTypeEnum.AIR},
-			{BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.AIR, BlockTypeEnum.IRON_BLOCK},
-			{BlockTypeEnum.AIR, BlockTypeEnum.AIR, BlockTypeEnum.AIR}
+			{BlockType.AIR, BlockType.AIR, BlockType.AIR},
+			{BlockType.IRON_BLOCK, BlockType.AIR, BlockType.IRON_BLOCK},
+			{BlockType.AIR, BlockType.AIR, BlockType.AIR}
 		},
 		{
-			{BlockTypeEnum.AIR, BlockTypeEnum.AIR, BlockTypeEnum.AIR},
-			{BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.AIR, BlockTypeEnum.IRON_BLOCK},
-			{BlockTypeEnum.AIR, BlockTypeEnum.AIR, BlockTypeEnum.AIR}
+			{BlockType.AIR, BlockType.AIR, BlockType.AIR},
+			{BlockType.IRON_BLOCK, BlockType.AIR, BlockType.IRON_BLOCK},
+			{BlockType.AIR, BlockType.AIR, BlockType.AIR}
 		},
 		{
-			{BlockTypeEnum.AIR, BlockTypeEnum.AIR, BlockTypeEnum.AIR},
-			{BlockTypeEnum.IRON_BLOCK, BlockTypeEnum.DIAMOND_BLOCK, BlockTypeEnum.IRON_BLOCK},
-			{BlockTypeEnum.AIR, BlockTypeEnum.AIR, BlockTypeEnum.AIR}
+			{BlockType.AIR, BlockType.AIR, BlockType.AIR},
+			{BlockType.IRON_BLOCK, BlockType.DIAMOND_BLOCK, BlockType.IRON_BLOCK},
+			{BlockType.AIR, BlockType.AIR, BlockType.AIR}
 		}
 	};
 	
@@ -43,6 +43,8 @@ public class Waypoints extends Mod {
 	public void activate() {
 		Waypoints.homelist = new HomeList();
 		Waypoints.homelist.load();
+		Waypoints.gatelist = new GateList();
+		Waypoints.gatelist.load();
 	}
 
 	protected boolean parseCommand(Player player, String[] tokens) {
@@ -59,6 +61,30 @@ public class Waypoints extends Mod {
 		}
 		else if( command.equalsIgnoreCase("unsethome") ) {
 			Waypoints.homelist.unsetUserHomePoint(player);
+			return true;
+		}
+		else if( command.equalsIgnoreCase("setgate") ) {
+			if( !player.isAdmin() ) return false;
+			if( 2 <= tokens.length ) {
+				Waypoints.gatelist.setGate(tokens[1], player);
+			}
+			else {
+				player.sendChat("ERROR: Must supply gate name", Color.Red);
+			}
+			return true;
+		}
+		else if( command.equalsIgnoreCase("gateto") ) {
+			if( !player.isAdmin() ) return false;
+			if( 2 <= tokens.length ) {
+				Waypoints.gatelist.sendPlayerToGate(player, tokens[1]);
+			}
+			else {
+				player.sendChat("ERROR: Must supply gate name.",Color.Red);
+			}
+			return true;
+		}
+		else if( command.equalsIgnoreCase("gates") ) {
+			Waypoints.gatelist.listGates(player);
 			return true;
 		}
 
@@ -79,13 +105,5 @@ public class Waypoints extends Mod {
 	@Override
 	public boolean onPlayerCommand(Player player, String[] command) {
 		return this.parseCommand(player, command);
-	}
-	
-	protected boolean isValidWaygate(Location loc, Player player) {
-		Location startLoc = new Location(loc.getX(), loc.getY()-1, loc.getZ());
-		player.sendChat(World.getBlock(startLoc).getEnum().toString());
-		
-		
-		return true;
-	}
+	}	
 }

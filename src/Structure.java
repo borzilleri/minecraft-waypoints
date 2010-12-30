@@ -13,10 +13,10 @@ public class Structure {
 		// Subtract one, as we always use the block beneath the player's feet.
 		return (int)Math.floor(loc.getY())-1;
 	}
-	public static BlockTypeEnum nonEvalBlock = BlockTypeEnum.BEDROCK;
+	public static BlockType nonEvalBlock = BlockType.BEDROCK;
 
 	public interface Actor {
-		public boolean doBlockAction(BlockTypeEnum structureBlockType,
+		public boolean doBlockAction(BlockType structureBlockType,
 						Block worldBlock);
 	}
 
@@ -25,9 +25,9 @@ public class Structure {
 		public Validator() {
 			invalidBlockCount = 0;
 		}
-		public boolean doBlockAction(BlockTypeEnum structureBlockType,
+		public boolean doBlockAction(BlockType structureBlockType,
 							Block worldBlock) {
-			if( worldBlock.getEnum() != structureBlockType &&
+			if( worldBlock.getBlockType() != structureBlockType &&
 					structureBlockType != Structure.nonEvalBlock ) {
 				invalidBlockCount += 1;
 				return false;
@@ -48,7 +48,7 @@ public class Structure {
 	 * @param playerLocation
 	 * @return
 	 */
-	public static void parse(BlockTypeEnum[][][] pattern,
+	public static void parse(BlockType[][][] pattern,
 					int[] startPosition,
 					Location playerLocation, Actor callBack) {
 		int thisZ, thisX, thisY;
