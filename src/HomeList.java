@@ -23,7 +23,17 @@ public class HomeList extends FileLoader {
 		homes = new LinkedHashMap<String,Location>();		
 	}
 
-	public void sendPlayerHome(Player player) {
+	public void sendPlayerHome(Player player, String[] commands) {
+		boolean debug = false;
+		boolean override = false;
+		
+		if( 2 <= commands.length && player.isAdmin() && commands[1].equalsIgnoreCase("debug") ) {
+			debug = true;
+			if( 3 <= commands.length && player.isAdmin() && commands[2].equalsIgnoreCase("override") ) {
+				override = true;
+			}
+		}
+
 		if( !hasHomePoint(player) ) {
 			player.sendChat("*** Returning to Spawn Point ***", Color.Gold);
 			Waypoints.loadChunkAtLocation(World.getSpawnLocation());
@@ -32,15 +42,28 @@ public class HomeList extends FileLoader {
 		}
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), validator);
+		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), validator, debug);
 
-		if( 0 >= validator.invalidBlockCount ) {
+		Location homeLoc = homes.get(player.getName());
+
+		if( debug ) {
+			Waypoints.showDistance(player, homeLoc);
+		}
+
+		if( 0 >= validator.invalidBlockCount || override ) {
 			player.sendChat("*** Returning Home ***", Color.Gold);
-			Waypoints.loadChunkAtLocation(homes.get(player.getName()));
-			player.setLocation(new Location(homes.get(player.getName())));
+			
+			Waypoints.loadChunkAtLocation(homeLoc);
+			if( !debug || override ) {
+				player.setLocation(homeLoc);
+			}
 			return;
 		}
 
+		if( debug ) {
+			player.sendChat("Invalid Blocks: " + validator.invalidBlockCount);
+		}
+		
 		player.sendChat("ERROR: Home point is invalid.", Color.Red);
 	}
 
@@ -71,6 +94,10 @@ public class HomeList extends FileLoader {
 							Block worldBlock) {
 				World.setBlock(worldBlock.getLocation(), BlockType.AIR);
 				return true;
+			}
+			public boolean doBlockAction(BlockType structureBlockType,
+							Block worldBlock, boolean debug) {
+				return doBlockAction(structureBlockType, worldBlock);
 			}
 		};
 		Structure.parse(homePointPattern, homePointStart, homes.get(player.getName()), remover);

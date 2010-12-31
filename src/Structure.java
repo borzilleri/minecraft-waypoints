@@ -17,7 +17,10 @@ public class Structure {
 
 	public interface Actor {
 		public boolean doBlockAction(BlockType structureBlockType,
+						Block worldBlock, boolean debug);
+		public boolean doBlockAction(BlockType structureBlockType,
 						Block worldBlock);
+
 	}
 
 	public static class Validator implements Actor {
@@ -26,16 +29,24 @@ public class Structure {
 			invalidBlockCount = 0;
 		}
 		public boolean doBlockAction(BlockType structureBlockType,
-							Block worldBlock) {
+							Block worldBlock, boolean debug) {
 			if( worldBlock.getBlockType() != structureBlockType &&
 					structureBlockType != Structure.nonEvalBlock ) {
+				if( debug ) {
+					Server.log(String.format("Invalid Home Block: Found %s, Expecting %s.",
+									worldBlock.getBlockType().getName(), structureBlockType.getName())
+									);
+				}
 				invalidBlockCount += 1;
 				return false;
 			}
 			return true;
 		}
+		public boolean doBlockAction(BlockType structureBlockType, Block worldBlock) {
+			return this.doBlockAction(structureBlockType, worldBlock, false);
+		}
 	}
-	
+
 	/**
 	 * NOTE:
 	 * Altitude -> Y
@@ -50,7 +61,7 @@ public class Structure {
 	 */
 	public static void parse(BlockType[][][] pattern,
 					int[] startPosition,
-					Location playerLocation, Actor callBack) {
+					Location playerLocation, Actor callBack, boolean debug) {
 		int thisZ, thisX, thisY;
 		Location thisLocation = new Location(playerLocation.getX(), playerLocation.getY(), playerLocation.getZ());
 
@@ -78,13 +89,21 @@ public class Structure {
 					thisLocation.setY(thisZ);
 					thisLocation.setZ(thisX);
 
+					World.loadChunk(thisLocation);
 					boolean continueLoop = (null == callBack) ? true :
-						callBack.doBlockAction(pattern[z][y][x], World.getBlock(thisLocation));
+						callBack.doBlockAction(pattern[z][y][x], World.getBlock(thisLocation), debug);
 					
 					if( !continueLoop ) return;
 				}
 			}
 		}
 	}
+
+	public static void parse(BlockType[][][] pattern,
+					int[] startPosition,
+					Location playerLocation, Actor callBack) {
+		Structure.parse(pattern, startPosition, playerLocation, callBack, false);
+	}
+
 
 }

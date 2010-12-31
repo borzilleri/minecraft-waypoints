@@ -52,7 +52,7 @@ public class Waypoints extends Mod {
 		String command = tokens[0];
 
 		if(command.equalsIgnoreCase("!home")) {
-			Waypoints.homelist.sendPlayerHome(player);
+			Waypoints.homelist.sendPlayerHome(player, tokens);
 			return true;
 		}
 		else if( command.equalsIgnoreCase("!sethome") ) {
@@ -76,7 +76,7 @@ public class Waypoints extends Mod {
 		else if( command.equalsIgnoreCase("!gateto") ) {
 			if( !player.isAdmin() ) return false;
 			if( 2 <= tokens.length ) {
-				Waypoints.gatelist.sendPlayerToGate(player, tokens[1]);
+				Waypoints.gatelist.sendPlayerToGate(player, tokens);
 			}
 			else {
 				player.sendChat("ERROR: Must supply gate name.",Color.Red);
@@ -87,12 +87,6 @@ public class Waypoints extends Mod {
 			Waypoints.gatelist.listGates(player);
 			return true;
 		}
-		else if( command.equalsIgnoreCase("!help") ) {
-			player.sendChat(Color.LightGray.getFormat() + this.getClass().getName() + ": " +
-							Color.White.getFormat() + toString() );
-			return true;
-		}
-
 
 		return false;
 	}
@@ -101,6 +95,9 @@ public class Waypoints extends Mod {
 		if( !World.isChunkLoaded(loc) ) {
 			World.loadChunk(loc);
 		}
+	}
+	public static void showDistance(Player player, Location loc) {
+		player.sendChat("Distance: " + Math.floor(player.getLocation().getDistance(loc)), Color.LightGray);
 	}
 
 

@@ -45,7 +45,15 @@ public class GateList extends FileLoader {
 		player.sendChat(gateList);
 	}
 
-	public void sendPlayerToGate(Player player, String gateName) {
+	public void sendPlayerToGate(Player player, String[] commands) {
+		if( 2 > commands.length ) return;
+		String gateName = commands[1];
+
+		boolean debug = false;
+		if( 3 <= commands.length && commands[2].equalsIgnoreCase("debug") && player.isAdmin() ) {
+			debug = true;
+		}
+
 		if( !gates.containsKey(gateName) ) {
 			player.sendChat("ERROR: Unknown gate", Color.Red);
 			return;
@@ -56,8 +64,15 @@ public class GateList extends FileLoader {
 		Structure.Validator validator = new Structure.Validator();
 		Structure.parse(gatePointPattern, gatePointStart, gateLocation, validator);
 
+		if( debug ) {
+			Waypoints.showDistance(player, gateLocation);
+		}
+		
 		if( 0 >= validator.invalidBlockCount ) {
-			player.setLocation(gateLocation);
+			player.sendChat(String.format("*** Gating To %s ***", gateName), Color.Gold);
+			if( !debug ) {
+				player.setLocation(gateLocation);
+			}
 		}
 		else {
 			player.sendChat("ERROR: Gate '"+gateName+"' is invalid.", Color.Red);
