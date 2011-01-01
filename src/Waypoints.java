@@ -74,7 +74,6 @@ public class Waypoints extends Mod {
 			return true;
 		}
 		else if( command.equalsIgnoreCase("!gateto") ) {
-			if( !player.isAdmin() ) return false;
 			if( 2 <= tokens.length ) {
 				Waypoints.gatelist.sendPlayerToGate(player, tokens);
 			}
