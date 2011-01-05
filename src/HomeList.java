@@ -36,8 +36,7 @@ public class HomeList extends FileLoader {
 
 		if( !hasHomePoint(player) ) {
 			player.sendChat("*** Returning to Spawn Point ***", Color.Gold);
-			Waypoints.loadChunkAtLocation(World.getSpawnLocation());
-			player.setLocation(World.getSpawnLocation());
+			Waypoints.sendPlayerTo(player, World.getSpawnLocation());
 			return;
 		}
 
@@ -52,10 +51,8 @@ public class HomeList extends FileLoader {
 
 		if( 0 >= validator.invalidBlockCount || override ) {
 			player.sendChat("*** Returning Home ***", Color.Gold);
-			
-			Waypoints.loadChunkAtLocation(homeLoc);
 			if( !debug || override ) {
-				player.setLocation(homeLoc);
+				Waypoints.sendPlayerTo(player, homeLoc);
 			}
 			return;
 		}

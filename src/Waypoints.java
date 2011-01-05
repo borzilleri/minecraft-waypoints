@@ -13,6 +13,7 @@ public class Waypoints extends Mod {
 	protected static HomeList homelist;
 	protected static GateList gatelist;
 	protected static MarkerList marklist;
+	public final static int TELEPORT_DELAY = 15;
 	
 	protected int[] wayPointStart = new int[] {0, 1, 1};
 	protected BlockType[][][] wayPointPattern = new BlockType[][][] {
@@ -116,6 +117,23 @@ public class Waypoints extends Mod {
 		return false;
 	}
 
+	public static void sendPlayerTo(Player player, Location loc) {
+		int sleepTime = 0;
+
+		while( sleepTime < TELEPORT_DELAY ) {
+			try {
+				Thread.sleep(1000);
+				player.sendChat("* Teleport in "+(TELEPORT_DELAY-sleepTime), Color.Gray);
+				sleepTime += 1;
+			}
+			catch( InterruptedException ex ) {
+			}
+		}
+		
+		loadChunkAtLocation(loc);
+		player.setLocation(loc);
+	}
+
 	public static void loadChunkAtLocation(Location loc) {
 		if( !World.isChunkLoaded(loc) ) {
 			World.loadChunk(loc);
@@ -128,7 +146,7 @@ public class Waypoints extends Mod {
 
 	@Override
 	public String toString() {
-		return "!home, !sethome, !unsethome, !gates, !gateto <name>";
+		return "!home, !sethome, !unsethome, !gates, !gateto <name>, !markers, !track, !mark";
 	}
 
 	@Override

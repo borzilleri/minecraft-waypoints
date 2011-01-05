@@ -81,7 +81,7 @@ public class GateList extends FileLoader {
 		if( 0 >= validator.invalidBlockCount ) {
 			player.sendChat(String.format("*** Gating To %s ***", gateName), Color.Gold);
 			if( !debug ) {
-				player.setLocation(gateLocation);
+				Waypoints.sendPlayerTo(player, gateLocation);
 			}
 		}
 		else {
