@@ -12,6 +12,7 @@
 public class Waypoints extends Mod {
 	protected static HomeList homelist;
 	protected static GateList gatelist;
+	protected static MarkerList marklist;
 	
 	protected int[] wayPointStart = new int[] {0, 1, 1};
 	protected BlockType[][][] wayPointPattern = new BlockType[][][] {
@@ -41,10 +42,12 @@ public class Waypoints extends Mod {
 
 	@Override
 	public void activate() {
-		Waypoints.homelist = new HomeList();
-		Waypoints.homelist.load();
-		Waypoints.gatelist = new GateList();
-		Waypoints.gatelist.load();
+		homelist = new HomeList();
+		homelist.load();
+		gatelist = new GateList();
+		gatelist.load();
+		marklist = new MarkerList();
+		marklist.load();
 	}
 
 	protected boolean parseCommand(Player player, String[] tokens) {
@@ -84,6 +87,29 @@ public class Waypoints extends Mod {
 		}
 		else if( command.equalsIgnoreCase("!gates") ) {
 			Waypoints.gatelist.listGates(player);
+			return true;
+		}
+		else if( command.equalsIgnoreCase("!markers") ) {
+			marklist.listMarkers(player);
+			return true;
+		}
+		else if( command.equalsIgnoreCase("!track") ) {
+			if( 2 <= tokens.length ) {
+				marklist.setTracking(tokens[1], player);
+			}
+			else {
+				player.sendChat("ERROR: Must supply marker or gate name to track.", Color.Red);
+			}
+
+			return true;
+		}
+		else if( command.equalsIgnoreCase("!mark") ) {
+			if( 2 <= tokens.length ) {
+				marklist.setMarker(tokens[1], player);
+			}
+			else {
+				player.sendChat("ERROR: Must supply marker name.", Color.Red);
+			}
 			return true;
 		}
 

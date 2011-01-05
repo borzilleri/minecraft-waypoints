@@ -6,7 +6,7 @@ import java.util.Map;
  * @author jonathan
  */
 public class GateList extends FileLoader {
-	protected LinkedHashMap<String,Location> gates;
+	protected static LinkedHashMap<String,Location> gates;
 
 	protected int[] gatePointStart = new int[] {0,0,3};
 	protected BlockType[][][] gatePointPattern = new BlockType[][][] {
@@ -33,6 +33,16 @@ public class GateList extends FileLoader {
 	public GateList() {
 		filename = "gates.txt";
 		gates = new LinkedHashMap<String,Location>();
+	}
+
+	public static boolean gateExists(String gateName) {
+		return gates.containsKey(gateName);
+	}
+	public static Location gateLocation(String gateName) {
+		if( gates.containsKey(gateName) ) {
+			return gates.get(gateName);
+		}
+		return null;
 	}
 
 	public void listGates(Player player) {
@@ -107,7 +117,6 @@ public class GateList extends FileLoader {
 		else {
 			player.sendChat("ERROR: Gate is invalid.", Color.Red);
 		}
-
 	}	
 	
 	protected void addGate(String name, double xLoc, double yLoc, double zLoc) {

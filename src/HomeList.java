@@ -8,7 +8,7 @@ import java.util.Map;
  * @author jonathan
  */
 public class HomeList extends FileLoader {
-	protected LinkedHashMap<String,Location> homes;
+	protected static LinkedHashMap<String,Location> homes;
 	protected int[] homePointStart = new int[] {0,1,1};
 	protected BlockType[][][] homePointPattern = new BlockType[][][] {
 		{
@@ -143,9 +143,16 @@ public class HomeList extends FileLoader {
 					 Math.abs(pLoc.getZ()-homeLoc.getZ()) < 1;
 	}
 	
-	protected boolean hasHomePoint(Player player) {
+	public static boolean hasHomePoint(Player player) {
 		return homes.containsKey(player.getName());
 	}
+	public static Location getHomeLocation(Player player) {
+		if( hasHomePoint(player) ) {
+			return homes.get(player.getName());
+		}
+		return null;
+	}
+
 	protected void addHomePoint(String name, double xLoc, double yLoc, double zLoc) {
 		homes.put(name, new Location(xLoc, yLoc, zLoc));
 	}
