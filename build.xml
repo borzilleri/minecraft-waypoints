@@ -7,9 +7,60 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="Waypoints" default="default" basedir=".">
-    <description>Builds, tests, and runs the project Waypoints.</description>
-    <import file="nbproject/build-impl.xml"/>
+<project name="Waypoints" default="clean-and-fat-jar" basedir=".">
+	<description>Builds, tests, and runs the project Waypoints.</description>
+	<import file="nbproject/build-impl.xml"/>
+
+	<target name="-post-jar">
+		<copy file="${dist.jar}" flatten="true" todir="${user.home}/Projects/minecraft/server/plugins" />
+	</target>
+
+	<target name="-pre-jar">
+		<unjar dest="${build.classes.dir}">
+			<fileset dir="lib">
+				<include name="**/sqlitejdbc-*.jar"/>
+			</fileset>
+			<patternset>
+				<exclude name="META-INF/**"/>
+				<exclude name="/*"/>
+			</patternset>
+		</unjar>
+		<property location="${build.classes.dir}" name="build.classes.dir.resolved"/>
+		<jar destfile="${dist.jar}">
+			<fileset dir="${build.classes.dir}"/>
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="-unjar-and-copy-lib-jars">
+		<unjar dest="${build.classes.dir}">
+			<fileset dir="lib">
+				<include name="**/*.jar"/>
+			</fileset>
+			<patternset>
+				<exclude name="META-INF/**"/>
+				<exclude name="/*"/>
+			</patternset>
+		</unjar>
+	</target>
+
+	<target depends="init,compile,-pre-pre-jar,-pre-jar,-unjar-and-copy-lib-jars" name="fat-jar">
+		<property location="${build.classes.dir}" name="build.classes.dir.resolved"/>
+		<jar destfile="${dist.jar}">
+			<fileset dir="${build.classes.dir}"/>
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+		<echo>To run this application from the command line without Ant, try:</echo>
+		<property location="${dist.jar}" name="dist.jar.resolved"/>
+		<echo>java -jar "${dist.jar.resolved}"</echo>
+	</target>
+
+	<target depends="clean,fat-jar" name="clean-and-fat-jar"/>
+
     <!--
 
     There exist several targets which are by default empty and which can be 

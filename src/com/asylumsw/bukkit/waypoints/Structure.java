@@ -1,9 +1,10 @@
 package com.asylumsw.bukkit.waypoints;
 
-import org.bukkit.Block;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.Server;
 
 /**
  *
@@ -39,9 +40,12 @@ public class Structure {
 			if( worldBlock.getType() != structureBlockType &&
 					structureBlockType != Structure.nonEvalBlock ) {
 				if( debug ) {
-					Server.log(String.format("Invalid Home Block: Found %s, Expecting %s.",
-									worldBlock.getBlockType().getName(), structureBlockType.getName())
-									);
+					System.out.println(
+									String.format("Invalid Home Block: [%d,%d,%d] Found %s, Expecting %s.",
+									worldBlock.getLocation().getBlockX(),
+									worldBlock.getLocation().getBlockZ(),
+									worldBlock.getLocation().getBlockY(),
+									worldBlock.getType().name(), structureBlockType.name()));
 				}
 				invalidBlockCount += 1;
 				return false;
@@ -71,7 +75,7 @@ public class Structure {
 		int thisZ, thisX, thisY;
 		Location thisLocation = new Location(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 
-		Waypoints.loadChunkAtLocation(thisLocation);
+		//Waypoints.loadChunkAtLocation(thisLocation);
 
 		/**
 		 * This ugly loop iterates over every value of the pattern.
@@ -104,7 +108,10 @@ public class Structure {
 						thisLocation.getWorld().getBlockAt(thisLocation.getBlockX(), thisLocation.getBlockY(), thisLocation.getBlockZ()),
 						debug);
 					
-					if( !continueLoop ) return;
+					if( !continueLoop ) {
+						if( debug ) System.out.println("Structure Parse stopped on: ["+thisX+","+thisY+","+thisZ+"]");
+						return;
+					}
 				}
 			}
 		}

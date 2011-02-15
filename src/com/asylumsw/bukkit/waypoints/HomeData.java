@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asylumsw.bukkit.waypoints;
 
 import java.sql.Statement;
@@ -10,23 +6,11 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Arrow;
-import org.bukkit.Block;
-import org.bukkit.Boat;
-import org.bukkit.Chunk;
-import org.bukkit.ItemDrop;
-import org.bukkit.ItemStack;
 import org.bukkit.Location;
-import org.bukkit.Minecart;
-import org.bukkit.PoweredMinecart;
-import org.bukkit.StorageMinecart;
-import org.bukkit.Vector;
-import org.bukkit.World;
 
 /**
  *
@@ -37,9 +21,10 @@ public class HomeData {
 	public final static String HOME_TABLE = "CREATE TABLE `homeList` ("
 					+ "`id` INTEGER PRIMARY KEY,"
 					+ "`player` varchar(255) NOT NULL UNIQUE,"
-					+ "x int NOT NULL, y int NOT NULL, z int NOT NULL"
-					+ "pitch smallint NOT NULL DEFAULT '0',"
-					+ "yaw smallint NOT NULL DEFAULT '0'";
+					+ "`x` int NOT NULL, `y` int NOT NULL, `z` int NOT NULL,"
+					+ "`pitch` smallint NOT NULL,"
+					+ "`yaw` smallint NOT NULL,"
+					+ "`world` varchar(255) NOT NULL )";
 
 	public static void initTable() {
 		if (!tableExists()) {
@@ -47,8 +32,8 @@ public class HomeData {
 		}
 	}
 
-	public static HashMap<String, Location> getHomes() {
-		HashMap<String, Location> homeList = new HashMap<String, Location>();
+	public static HashMap<String, Warp> getHomes() {
+		HashMap<String, Warp> homeList = new HashMap<String, Warp>();
 		Connection conn = null;
 		Statement statement = null;
 		ResultSet set = null;
@@ -59,30 +44,14 @@ public class HomeData {
 			conn = DriverManager.getConnection(Waypoints.DATABASE);
 
 			statement = conn.createStatement();
-			set = statement.executeQuery("SELECT player,x,y,z,pitch,yaw FROM homeList");
-			int size = 0;
-			Location thisLoc = null;
-
+			set = statement.executeQuery("SELECT player,x,y,z,pitch,yaw,world FROM homeList");
 			while (set.next()) {
-				thisLoc = new Location(null, set.getInt("x"), set.getInt("y"), set.getInt("z"), set.getInt("yaw"), set.getInt("pitch"));
-
-				size++;
-				int index = set.getInt("id");
-				String name = set.getString("name");
-				String creator = set.getString("creator");
-				int world = set.getInt("world");
-				int x = set.getInt("x");
-				int y = set.getInt("y");
-				int z = set.getInt("z");
-				int yaw = set.getInt("yaw");
-				int pitch = set.getInt("pitch");
-				boolean publicAll = set.getBoolean("publicAll");
-				String permissions = set.getString("permissions");
-				String welcomeMessage = set.getString("welcomeMessage");
-				Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, welcomeMessage);
-				ret.put(name, warp);
+				String player = set.getString("player");
+				Warp home = new Warp(player, set.getInt("x"), set.getInt("y"),
+								set.getInt("z"), set.getInt("yaw"), set.getInt("pitch"),
+								set.getString("world"), Waypoint.HOME);
+				homeList.put(player, home);
 			}
-			log.info("[MYWARP]: " + size + " warps loaded");
 		}
 		catch (SQLException ex) {
 			log.log(Level.SEVERE, "[MYWARP]: Warp Load Exception");
@@ -127,7 +96,7 @@ public class HomeData {
 		}
 		catch (ClassNotFoundException ex2) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS]: Table Check Exception");
+			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Class Not Found Exception");
 			return false;
 		}
 		finally {
@@ -141,7 +110,7 @@ public class HomeData {
 			}
 			catch (SQLException ex) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS]: Table Check Exception (on closing)");
+				log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Table Check Exception (on closing)");
 			}
 		}
 	}
@@ -161,7 +130,7 @@ public class HomeData {
 		}
 		catch (ClassNotFoundException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -174,35 +143,37 @@ public class HomeData {
 			}
 			catch (SQLException e) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS]: Could not create the table (on close)");
+				log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Could not create the table (on close)");
 			}
 		}
 	}
 
-	public static void addHome(String playerName, Location loc) {
+	public static boolean addHome(Warp loc) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		Logger log = Logger.getLogger("Minecraft");
+		boolean success = false;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection(Waypoints.DATABASE);
-			ps = conn.prepareStatement("INSERT INTO homeList (player, x, y, z, pitch, yaw) "
-							+ "VALUES (?,?,?,?,?,?)");
-			ps.setString(1, playerName);
-			ps.setInt(2, loc.getBlockX());
-			ps.setInt(3, loc.getBlockY());
-			ps.setInt(4, loc.getBlockZ());
+			ps = conn.prepareStatement("INSERT INTO homeList (player, x, y, z, pitch, yaw, world) "
+							+ "VALUES (?,?,?,?,?,?,?)");
+			ps.setString(1, loc.getName());
+			ps.setInt(2, loc.getX());
+			ps.setInt(3, loc.getY());
+			ps.setInt(4, loc.getZ());
 			ps.setInt(5, (int) loc.getPitch());
 			ps.setInt(6, (int) loc.getYaw());
+			ps.setString(7, loc.getWorldName());
 
 			ps.executeUpdate();
-
+			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:HOME]: Warp Insert Exception", ex);
+			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Warp Insert Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -214,21 +185,26 @@ public class HomeData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Warp Insert Exception (on close)", ex);
+
 			}
 		}
+
+		return success;
 	}
 
-	public static void deleteHome(String playerName) {
+	public static boolean deleteHome(String playerName) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		Logger log = Logger.getLogger("Minecraft");
+		boolean success = false;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection(Waypoints.DATABASE);
 			ps = conn.prepareStatement("DELETE FROM homeList WHERE player = ?");
 			ps.setString(1, playerName);
 			ps.executeUpdate();
+			success = true;
 		}
 		catch (SQLException ex) {
 			log.log(Level.SEVERE, "[WAYPOINTS:HOME]: Warp Insert Exception", ex);
@@ -249,6 +225,6 @@ public class HomeData {
 				log.log(Level.SEVERE, "[WAYPOINTS]: Warp Insert Exception (on close)", ex);
 			}
 		}
-
+		return success;
 	}
 }

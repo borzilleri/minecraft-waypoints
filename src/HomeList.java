@@ -1,3 +1,4 @@
+import com.asylumsw.bukkit.waypoints.HomeData;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
