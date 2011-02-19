@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
  * @author jonathan
  */
 public class Homes {
+	public final static int WARP_DELAY = 15;
 	private static HashMap<String,Warp> homeList;
 	protected static int[] homePointStart = new int[] {0,1,1};
 	protected static Material[][][] homePointPattern = new Material[][][] {
@@ -30,7 +31,7 @@ public class Homes {
 		// If the player does not have a home point, send them to the spawn.
 		if( !homeList.containsKey(player.getName()) ) {
 			player.sendMessage(ChatColor.GOLD + "*** Returning to Spawn Point ***");
-			Waypoints.warpPlayerTo(player, player.getWorld().getSpawnLocation());
+			Waypoints.warpPlayerTo(player, player.getWorld().getSpawnLocation(), WARP_DELAY);
 			return;
 		}
 

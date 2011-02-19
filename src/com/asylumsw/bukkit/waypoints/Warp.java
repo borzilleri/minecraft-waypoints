@@ -9,8 +9,11 @@ import org.bukkit.World;
  * @author jonathan
  */
 public class Warp {
+	public final static int DEFAULT_DELAY = 20;
+
 	private Waypoint type;
 	private String name;
+	private String owner;
 	private int x;
 	private int y;
 	private int z;
@@ -55,6 +58,9 @@ public class Warp {
 		this.world = loc.getWorld().getName();
 	}
 
+	public void setOwner(String owner) { this.owner = owner; }
+	public void setOwner(Player owner) { this.owner = owner.getName(); }
+
 	public String getName() { return name; }
 	public Waypoint getType() { return type; }
 	public int getX() { return x; }
@@ -64,14 +70,32 @@ public class Warp {
 	public int getYaw() { return yaw; }
 	public String getWorldName() { return world; }
 	public World getWorld() { return Waypoints.serverInstance.getWorld(world); }
+	public Player getOwner() { return Waypoints.serverInstance.getPlayer(owner); }
+	public String getOwnerName() { return owner; }
 
 	public void warp(Player player) {
+		int delay;
+		switch(type) {
+			case HOME:
+				delay = Homes.WARP_DELAY;
+				break;
+			case GATE:
+				delay = Gates.WARP_DELAY;
+				break;
+			default:
+				delay = DEFAULT_DELAY;
+				break;
+		}
 		Location loc = new Location(Waypoints.serverInstance.getWorld(world), x, y, z, yaw, pitch);
-		Waypoints.warpPlayerTo(player, loc);
+		Waypoints.warpPlayerTo(player, loc, delay);
 	}
 
 	public Location getLocation() {
 		return new Location(Waypoints.serverInstance.getWorld(world), x, y, z, yaw, pitch);
+	}
+
+	public int distanceFromLocation(Location loc) {
+		return (int)Math.floor(loc.toVector().distance(getLocation().toVector()));
 	}
 	
 }

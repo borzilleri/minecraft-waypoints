@@ -16,7 +16,6 @@ import org.bukkit.plugin.PluginManager;
  * @author jonathan
  */
 public class Waypoints extends JavaPlugin {
-	public final static int TELEPORT_DELAY = 15;
 	private final WPPlayerListener playerListener = new WPPlayerListener(this);
 
 	public static Server serverInstance;
@@ -31,6 +30,7 @@ public class Waypoints extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		Homes.loadHomes();
+		Gates.loadGates();
 
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
@@ -45,12 +45,12 @@ public class Waypoints extends JavaPlugin {
 		System.out.println("Waypoints Disabled.");
 	}
 
-	public static void warpPlayerTo(Player player, Location loc) {
+	public static void warpPlayerTo(Player player, Location loc, int delay) {
 		int sleepTime = 0;
-		while (sleepTime < TELEPORT_DELAY) {
+		while (sleepTime < delay) {
 			try {
 				Thread.sleep(1000);
-				player.sendMessage(ChatColor.GRAY+"* Teleport in " + (TELEPORT_DELAY - sleepTime));
+				player.sendMessage(ChatColor.GRAY+"* Teleport in " + (delay - sleepTime));
 				sleepTime += 1;
 			}
 			catch (InterruptedException ex) {
