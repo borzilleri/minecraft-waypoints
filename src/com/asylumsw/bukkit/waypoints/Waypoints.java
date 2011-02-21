@@ -17,18 +17,12 @@ import org.bukkit.plugin.PluginManager;
  */
 public class Waypoints extends JavaPlugin {
 	private final WPPlayerListener playerListener = new WPPlayerListener(this);
-
 	public static Server serverInstance;
-
 	public final static String DATABASE = "jdbc:sqlite:waypoints.db";
-
-	public Waypoints(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-		super(pluginLoader, instance, desc, folder, plugin, cLoader);
-		this.serverInstance = instance;
-	}
-
+	
 	@Override
 	public void onEnable() {
+		serverInstance = this.getServer();
 		Homes.loadHomes();
 		Gates.loadGates();
 
