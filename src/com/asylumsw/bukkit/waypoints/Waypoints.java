@@ -41,7 +41,7 @@ public class Waypoints extends JavaPlugin {
 		String action = args[0];
 
 		if( action.equalsIgnoreCase("home") ) {
-			if( 2 > args.length ) {
+			if( 2 <= args.length ) {
 				if( args[1].equalsIgnoreCase("activate") ) {
 					Homes.setHomePoint((Player)sender);
 					return true;
@@ -57,7 +57,7 @@ public class Waypoints extends JavaPlugin {
 				return true;
 			}
 		}
-		else if(action.equalsIgnoreCase("gate") && 2 > args.length ) {
+		else if(action.equalsIgnoreCase("gate") && 2 <= args.length ) {
 			String gateAction = args[1];
 			if( gateAction.equalsIgnoreCase("list") ) {
 				Gates.listPlayerGates((Player)sender);
@@ -68,7 +68,7 @@ public class Waypoints extends JavaPlugin {
 				return true;
 			}
 			else if( gateAction.equalsIgnoreCase("activate") ) {
-				if( 3 > args.length ) {
+				if( 3 <= args.length ) {
 					sender.sendMessage(ChatColor.RED + "Error: Must supply gate name.");
 					return false;
 				}

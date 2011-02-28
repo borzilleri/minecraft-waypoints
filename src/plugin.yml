@@ -7,11 +7,11 @@ description: >
 commands:
   wp:
     description: Access to all waypoint commands.
-  usage: |
-         /<command> home activate - Activate your Home Point
-         /<command> home remove - Remove your Home Point
-         /<command> home - Go to your Home Point
-         /<command> gate activate <name> - Activate a gate with the specified name.
-         /<command> gate remove - Remove the gate you're currently at. Must be the gate owner.
-         /<command> gate list - List all gates you have access to.
-         /<command> gate <name> - Gate to the specified gate.
+    usage: |
+           /<command> home activate - Activate your home point.
+           /<command> home remove - Remove your home point.
+           /<command> home - Teleport to your home point.
+           /<command> gate list - List gates you have access to.
+           /<command> gate <name> - Travel to the specified gate.
+           /<command> gate activate <name> - Activate a gate with the specified name.
+           /<command> gate remove
