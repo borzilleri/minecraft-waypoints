@@ -1,3 +1,17 @@
 name: Waypoints
 main: com.asylumsw.bukkit.waypoints.Waypoints
 version: 2.0
+author: Jonathan Borzilleri
+description: >
+             Provides teleportation services.
+commands:
+  wp:
+    description: Access to all waypoint commands.
+  usage: |
+         /<command> home activate - Activate your Home Point
+         /<command> home remove - Remove your Home Point
+         /<command> home - Go to your Home Point
+         /<command> gate activate <name> - Activate a gate with the specified name.
+         /<command> gate remove - Remove the gate you're currently at. Must be the gate owner.
+         /<command> gate list - List all gates you have access to.
+         /<command> gate <name> - Gate to the specified gate.
