@@ -14,16 +14,17 @@ import org.bukkit.entity.Player;
  * @author jonathan
  */
 public class Waypoints extends JavaPlugin {
+
 	public static Server serverInstance;
 	public final static String DATABASE = "jdbc:sqlite:waypoints.db";
-	
+
 	@Override
 	public void onEnable() {
 		serverInstance = this.getServer();
 		Homes.loadMarkers();
 		Gates.loadGates();
 		Markers.loadMarkers();
-		
+
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 	}
@@ -35,69 +36,88 @@ public class Waypoints extends JavaPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if( !(sender instanceof Player) ) return false;
-		if( !cmd.getName().equalsIgnoreCase("wp") ) return false;
-		if( 1 > args.length ) return false;
+		// Is this necessary?
+		if (!cmd.getName().equalsIgnoreCase("wp")) return false;
+		if (1 > args.length) return false;
 
 		String action = args[0];
 
-		if( action.equalsIgnoreCase("home") ) {
-			if( 2 <= args.length ) {
-				if( args[1].equalsIgnoreCase("activate") ) {
-					Homes.setHomePoint((Player)sender);
+		if (action.equalsIgnoreCase("home")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(ChatColor.GRAY + "[wp] "
+								+ ChatColor.RED + "ERROR: This command is available only to players.");
+			}
+			else if (2 <= args.length) {
+				if (args[1].equalsIgnoreCase("activate")) {
+					Homes.setHomePoint((Player) sender);
 					return true;
 				}
-				else if( args[1].equalsIgnoreCase("remove") ) {
-					Homes.unsetHomePoint((Player)sender);
+				else if (args[1].equalsIgnoreCase("remove")) {
+					Homes.unsetHomePoint((Player) sender);
 					return true;
 				}
 				return false;
 			}
 			else {
-				Homes.sendPlayerHome((Player)sender, false, false);
-				return true;
+				Homes.sendPlayerHome((Player) sender, false, false);
 			}
+			return true;
 		}
-		else if(action.equalsIgnoreCase("gate") && 2 <= args.length ) {
+		else if (action.equalsIgnoreCase("gate") && 2 <= args.length) {
 			String gateAction = args[1];
-			if( gateAction.equalsIgnoreCase("list") ) {
-				Gates.listPlayerGates((Player)sender);
+			if( !(sender instanceof Player) && !gateAction.equalsIgnoreCase("list") ) {
+				sender.sendMessage(ChatColor.GRAY + "[wp] "
+								+ ChatColor.RED + "ERROR: This command is available only to players.");
 				return true;
 			}
-			else if( gateAction.equalsIgnoreCase("remove") ) {
-				sender.sendMessage(ChatColor.RED+"Error: Removeing gates is not yet implemented.");
-				return true;
+
+			if (gateAction.equalsIgnoreCase("list")) {
+				Gates.listPlayerGates(sender);
 			}
-			else if( gateAction.equalsIgnoreCase("activate") ) {
-				if( 3 > args.length ) {
+			else if (gateAction.equalsIgnoreCase("remove")) {
+				sender.sendMessage(ChatColor.RED + "Error: Removeing gates is not yet implemented.");
+			}
+			else if (gateAction.equalsIgnoreCase("activate")) {
+				if (3 > args.length) {
 					sender.sendMessage(ChatColor.RED + "Error: Must supply gate name.");
 					return false;
 				}
-				Gates.activateGate((Player)sender, args[2]);
-				return true;
+				Gates.activateGate((Player) sender, args[2]);
 			}
 			else {
-				Gates.sendPlayerToGate((Player)sender, gateAction);
-				return true;
+				Gates.sendPlayerToGate((Player) sender, gateAction);
 			}
-		}
-		else if( action.equalsIgnoreCase("track") && 2 <= args.length ) {
-			Tracker.trackLocation((Player)sender, args[1]);
 			return true;
 		}
-		else if( action.equalsIgnoreCase("mark") && 3 <= args.length ) {
+		else if (action.equalsIgnoreCase("track") && 2 <= args.length) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(ChatColor.GRAY + "[wp] "
+								+ ChatColor.RED + "ERROR: This command is available only to players.");
+			}
+			else {
+				Tracker.trackLocation((Player) sender, args[1]);
+			}
+			return true;
+		}
+		else if (action.equalsIgnoreCase("mark") && 3 <= args.length) {
 			String markAction = args[1];
 
-			if( markAction.equalsIgnoreCase("set") ) {
-				Markers.setMark((Player)sender, args[2]);
+			if (markAction.equalsIgnoreCase("set")) {
+				if (!(sender instanceof Player)) {
+					sender.sendMessage(ChatColor.GRAY + "[wp] "
+									+ ChatColor.RED + "ERROR: This command is available only to players.");
+				}
+				else {
+					Markers.setMark((Player) sender, args[2]);
+				}
 				return true;
 			}
-			else if( markAction.equalsIgnoreCase("remove") ) {
-				Markers.unsetMark((Player)sender, args[2]);
+			else if (markAction.equalsIgnoreCase("remove")) {
+				Markers.unsetMark(sender, args[2]);
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -106,7 +126,7 @@ public class Waypoints extends JavaPlugin {
 		while (sleepTime < delay) {
 			try {
 				Thread.sleep(1000);
-				player.sendMessage(ChatColor.GRAY+"* Teleport in " + (delay - sleepTime));
+				player.sendMessage(ChatColor.GRAY + "* Teleport in " + (delay - sleepTime));
 				sleepTime += 1;
 			}
 			catch (InterruptedException ex) {
@@ -115,5 +135,4 @@ public class Waypoints extends JavaPlugin {
 
 		player.teleport(loc);
 	}
-
 }

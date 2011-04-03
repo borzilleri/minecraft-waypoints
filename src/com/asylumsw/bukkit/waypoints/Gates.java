@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -74,22 +75,24 @@ public class Gates {
 		gateAccess = GateData.getGateActivations();
 	}
 
-	public static void listPlayerGates(Player player) {
+	public static void listPlayerGates(CommandSender sender) {
+		String playerName = "";
+		if( sender instanceof Player ) {
+			playerName = ((Player)sender).getName();
+		}
+		
 		ArrayList<String> gates = new ArrayList<String>();
-
 		for( Map.Entry<String,Warp> gate : gateList.entrySet() ) {
-			if( gate.getValue().getOwnerName().equalsIgnoreCase(player.getName()) ) {
+			if( gate.getValue().getOwnerName().equalsIgnoreCase(playerName) ||
+					sender.isOp() ||
+					( gateAccess.containsKey(playerName) && gateAccess.get(playerName).contains(gate.getKey())) ) {
 				gates.add(gate.getKey());
 			}
 		}
-		if( gateAccess.containsKey(player.getName()) ) {
-			for( String gate : gateAccess.get(player.getName()) ) {
-				gates.add(gate);
-			}
-		}
-
+		
 		if( 0 >= gates.size() ) {
-			player.sendMessage(ChatColor.RED+"You cannot access any gates.");
+			sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+							ChatColor.RED+"You cannot access any gates.");
 			return;
 		}
 
@@ -97,12 +100,12 @@ public class Gates {
 		String msg = ChatColor.GRAY+"Available Gates: ";
 		for( String gate : gates ) {
 			if( msg.length() >= 40 ) {
-				player.sendMessage(msg);
+				sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg);
 				msg = "";
 			}
 			msg += ChatColor.AQUA + gate + ChatColor.GRAY + ",";
 		}
-		player.sendMessage(msg);
+		sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg);
 	}
 
 	public static boolean playerHasGateAccess(Player player, String gateName) {

@@ -3,6 +3,7 @@ package com.asylumsw.bukkit.waypoints;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -80,20 +81,32 @@ public class Markers {
 		return false;
 	}
 
-	public static boolean unsetMark(Player player, String markerName) {
+	public static boolean unsetMark(CommandSender sender, String markerName) {
 		if( !markerList.containsKey(markerName) ) {
-			player.sendMessage(ChatColor.RED+"ERROR: No active marker named '"+markerName+"'.");
+			sender.sendMessage(ChatColor.RED+"ERROR: No active marker named '"+markerName+"'.");
 			return false;
 		}
-
 		Warp mark = markerList.get(markerName);
 
-		if( !MarkerData.deleteMarker(mark.getName()) ) {
-			player.sendMessage(ChatColor.RED+"ERROR: An error occured removing marker '"+markerName+"'.");
+		if( !(sender instanceof Player) && !sender.isOp() ) {
+			sender.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED+"ERROR: Only admins or players may remove markers.");
 			return false;
 		}
 		
-		player.sendMessage(ChatColor.GOLD+"*** Removing marker '"+markerName+"'. ***");
+		Player player = (Player)sender;
+		if( !mark.getOwnerName().equalsIgnoreCase(player.getName()) || !player.isOp() ) {
+			sender.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED+"ERROR: Only admins or the marker's owner may remove a marker.");
+			return false;
+		}
+
+		if( !MarkerData.deleteMarker(mark.getName()) ) {
+			sender.sendMessage(ChatColor.RED+"ERROR: An error occured removing marker '"+markerName+"'.");
+			return false;
+		}
+		
+		sender.sendMessage(ChatColor.GOLD+"*** Removing marker '"+markerName+"'. ***");
 		return true;
 	}
 }
