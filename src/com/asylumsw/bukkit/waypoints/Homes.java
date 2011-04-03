@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
  */
 public class Homes {
 	public final static int WARP_DELAY = 15;
-	private static HashMap<String,Warp> markerList;
-	protected static int[] markerPointStart = new int[] {0,1,1};
-	protected static Material[][][] markerPointPattern = new Material[][][] {
+	private static HashMap<String,Warp> homeList;
+	protected static int[] homePointStart = new int[] {0,1,1};
+	protected static Material[][][] homePointPattern = new Material[][][] {
 		{
 			{Material.GLASS, Material.GLASS, Material.GLASS},
 			{Material.GLASS, Material.IRON_BLOCK, Material.GLASS},
@@ -24,21 +24,35 @@ public class Homes {
 
 	public static void loadMarkers() {
 		HomeData.initTable();
-		markerList = HomeData.getHomes();
+		homeList = HomeData.getHomes();
+	}
+
+	public static boolean hasHomePoint(Player player) {
+		return homeList.containsKey(player.getName());
+	}
+	public static boolean trackHomePoint(Player player) {
+		if( !hasHomePoint(player) ) {
+			player.sendMessage(ChatColor.RED+"ERROR: You do not have an active home point.");
+			return false;
+		}
+
+		player.sendMessage(ChatColor.GOLD+"*** Setting compass to Home Point");
+		player.setCompassTarget(homeList.get(player.getName()).getLocation());
+		return true;
 	}
 
 	public static void sendPlayerHome(Player player, boolean debug, boolean override) {
 		// If the player does not have a home point, send them to the spawn.
-		if( !markerList.containsKey(player.getName()) ) {
+		if( !homeList.containsKey(player.getName()) ) {
 			player.sendMessage(ChatColor.GOLD + "*** Returning to Spawn Point ***");
 			Waypoints.warpPlayerTo(player, player.getWorld().getSpawnLocation(), WARP_DELAY);
 			return;
 		}
 
-		Warp home = markerList.get(player.getName());
+		Warp home = homeList.get(player.getName());
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(markerPointPattern, markerPointStart, home.getLocation(), validator, debug);
+		Structure.parse(homePointPattern, homePointStart, home.getLocation(), validator, debug);
 
 		if( 0 < validator.invalidBlockCount ) {
 			player.sendMessage(ChatColor.RED+"ERROR: Home point is invalid.");
@@ -56,18 +70,18 @@ public class Homes {
 	}
 
 	public static boolean setHomePoint(Player player) {
-		if( markerList.containsKey(player.getName()) ) {
+		if( homeList.containsKey(player.getName()) ) {
 			player.sendMessage(ChatColor.RED+"Error: Home Point already active.");
 			return false;
 		}
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(markerPointPattern, markerPointStart, player.getLocation(), validator,true);
+		Structure.parse(homePointPattern, homePointStart, player.getLocation(), validator,true);
 
 		if( 0 >= validator.invalidBlockCount ) {
 			Warp home = new Warp(player.getName(), player, Waypoint.HOME);
 			if( HomeData.addHome(home) ) {
-				markerList.put(player.getName(), home);
+				homeList.put(player.getName(), home);
 				player.sendMessage(ChatColor.GOLD+"*** Activating Home Point ***");
 				return true;
 			}
@@ -83,16 +97,16 @@ public class Homes {
 	}
 
 	public static boolean unsetHomePoint(Player player) {
-		if( !markerList.containsKey(player.getName()) ) {
+		if( !homeList.containsKey(player.getName()) ) {
 			// Player has no active home point.
 			player.sendMessage(ChatColor.RED+"ERROR: No active home point.");
 			return false;
 		}
 
-		Warp home = markerList.get(player.getName());
+		Warp home = homeList.get(player.getName());
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(markerPointPattern, markerPointStart, home.getLocation(), validator);
+		Structure.parse(homePointPattern, homePointStart, home.getLocation(), validator);
 
 		if( 0 < validator.invalidBlockCount ) {
 			// Player's home point is invalid
@@ -121,10 +135,10 @@ public class Homes {
 				return doBlockAction(structureBlockType, worldBlock);
 			}
 		};
-		Structure.parse(markerPointPattern, markerPointStart, markerList.get(player.getName()).getLocation(), remover);
+		Structure.parse(homePointPattern, homePointStart, homeList.get(player.getName()).getLocation(), remover);
 
 		// Remove home point from the list, and save the list.
-		markerList.remove(player.getName());
+		homeList.remove(player.getName());
 
 		player.sendMessage(ChatColor.GOLD+"*** Deactivating Home Point ***");
 		return true;

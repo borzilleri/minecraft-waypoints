@@ -111,6 +111,13 @@ public class Gates {
 		if( !gateAccess.containsKey(player.getName()) ) return false;
 		return gateAccess.get(player.getName()).contains(gateName);
 	}
+	public static boolean trackGate(Player player, String gateName) {
+		if( !playerHasGateAccess(player, gateName) ) return false;
+
+		player.sendMessage(ChatColor.GOLD+"*** Setting compass to track Gate: "+gateName+" ***");
+		player.setCompassTarget(gateList.get(gateName).getLocation());
+		return true;
+	}
 
 	public static void sendPlayerToGate(Player player, String gateName) {
 		// The gate name "Home" is reserved as an alias for /home

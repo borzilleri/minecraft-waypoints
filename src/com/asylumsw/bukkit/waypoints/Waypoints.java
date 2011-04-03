@@ -82,9 +82,7 @@ public class Waypoints extends JavaPlugin {
 			}
 		}
 		else if( action.equalsIgnoreCase("track") && 2 <= args.length ) {
-			String trackingPoint = args[1];
-
-			// do track point.
+			Tracker.trackLocation((Player)sender, args[1]);
 			return true;
 		}
 		else if( action.equalsIgnoreCase("mark") && 3 <= args.length ) {
