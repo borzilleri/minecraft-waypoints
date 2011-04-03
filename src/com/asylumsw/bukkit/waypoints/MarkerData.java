@@ -20,7 +20,7 @@ public class MarkerData {
 	public final static String MARKER_TABLE = "CREATE TABLE `markerList` ("
 					+ "`id` INTEGER PRIMARY KEY,"
 					+ "`player` varchar(255) NOT NULL,"
-					+ "`name` varchar(255) NOT NULL UNIQUE"
+					+ "`name` varchar(255) NOT NULL UNIQUE,"
 					+ "`x` int NOT NULL, `y` int NOT NULL, `z` int NOT NULL,"
 					+ "`world` varchar(255) NOT NULL )";
 

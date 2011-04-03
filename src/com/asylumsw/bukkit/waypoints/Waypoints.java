@@ -22,6 +22,7 @@ public class Waypoints extends JavaPlugin {
 		serverInstance = this.getServer();
 		Homes.loadMarkers();
 		Gates.loadGates();
+		Markers.loadMarkers();
 		
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");

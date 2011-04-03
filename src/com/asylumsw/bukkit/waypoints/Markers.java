@@ -3,7 +3,6 @@ package com.asylumsw.bukkit.waypoints;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 /**
@@ -12,7 +11,12 @@ import org.bukkit.entity.Player;
  */
 public class Markers {
 	private static HashMap<String,Warp> markerList;
-	protected static int[] markerPointStart = new int[] {0,-1,0};
+	protected static int[][] markerStartPoints = new int[][] {
+		{-1,1,0}, // North of Player
+		{-1,-1,0}, // South of Player
+		{-1,0,1}, // East of Player
+		{-1,0,-1}  // West of Player
+	};
 	protected static Material[][][] markerPattern = new Material[][][] {
 		{
 			{Material.COBBLESTONE}
@@ -44,10 +48,18 @@ public class Markers {
 			return false;
 		}
 
-		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(markerPattern, markerPointStart, player.getLocation(), validator,true);
+		boolean isValidMark = false;
+		for( int[] startPoint: markerStartPoints ) {
+			Structure.Validator validator = new Structure.Validator();
+			Structure.parse(markerPattern, startPoint, player.getLocation(), validator,true);
 
-		if( 0 >= validator.invalidBlockCount ) {
+			if( 0 >= validator.invalidBlockCount ) {
+				isValidMark = true;
+				break;
+			}
+		}
+
+		if( isValidMark ) {
 			Warp mark = new Warp(markerName, player.getLocation(), Waypoint.MARKER);
 			mark.setOwner(player);
 
