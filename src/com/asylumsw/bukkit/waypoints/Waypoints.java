@@ -21,8 +21,8 @@ public class Waypoints extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		serverInstance = this.getServer();
-		Homes.loadMarkers();
-		Gates.loadGates();
+		Homes.load();
+		Gates.load();
 		Markers.loadMarkers();
 
 		PluginDescriptionFile pdfFile = this.getDescription();

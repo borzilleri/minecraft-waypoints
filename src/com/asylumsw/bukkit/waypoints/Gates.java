@@ -69,7 +69,7 @@ public class Gates {
 		}
 	};
 
-	public static void loadGates() {
+	public static void load() {
 		GateData.initTable();
 		gateList = GateData.getGates();
 		gateAccess = GateData.getGateActivations();

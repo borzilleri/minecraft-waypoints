@@ -22,7 +22,7 @@ public class Homes {
 		}
 	};
 
-	public static void loadMarkers() {
+	public static void load() {
 		HomeData.initTable();
 		homeList = HomeData.getHomes();
 	}

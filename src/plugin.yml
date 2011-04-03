@@ -17,3 +17,6 @@ commands:
            /<command> gate remove
            /<command> track <name> - Track the specified point.
            /<command> mark set <name> - Set a marker with the given name.
+           /<command> portal activate - Begin/Complete setting up linked portals.
+           /<command> portal remove - Remove this set of linked portals.
+           /<command> port - Use a linked portal.
