@@ -184,6 +184,10 @@ public class Gates {
 			player.sendMessage(ChatColor.RED + "Error: Gate name 'home' is reserved.");
 			return false;
 		}
+		if (gateName.equalsIgnoreCase("reset")) {
+			player.sendMessage(ChatColor.RED + "Error: Gate name 'reset' is reserved.");
+			return false;
+		}
 
 		Location loc;
 		Warp gate = gateList.containsKey(gateName) ? gateList.get(gateName) : null;
@@ -286,5 +290,9 @@ public class Gates {
 
 		player.sendMessage(ChatColor.GOLD + "*** Deactivating Home Point ***");
 		return true;
+	}
+
+	public static boolean gateExists(String name) {
+		return gateList.containsKey(name);
 	}
 }

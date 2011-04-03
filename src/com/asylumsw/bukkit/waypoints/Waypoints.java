@@ -20,7 +20,7 @@ public class Waypoints extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		serverInstance = this.getServer();
-		Homes.loadHomes();
+		Homes.loadMarkers();
 		Gates.loadGates();
 		
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -68,7 +68,7 @@ public class Waypoints extends JavaPlugin {
 				return true;
 			}
 			else if( gateAction.equalsIgnoreCase("activate") ) {
-				if( 3 <= args.length ) {
+				if( 3 > args.length ) {
 					sender.sendMessage(ChatColor.RED + "Error: Must supply gate name.");
 					return false;
 				}
@@ -77,6 +77,25 @@ public class Waypoints extends JavaPlugin {
 			}
 			else {
 				Gates.sendPlayerToGate((Player)sender, gateAction);
+				return true;
+			}
+		}
+		else if( action.equalsIgnoreCase("track") && 2 <= args.length ) {
+			String trackingPoint = args[1];
+
+			// do track point.
+			return true;
+		}
+		else if( action.equalsIgnoreCase("mark") && 3 <= args.length ) {
+			String markAction = args[1];
+
+			if( markAction.equalsIgnoreCase("set") ) {
+				Markers.setMark((Player)sender, args[2]);
+				return true;
+			}
+			else if( markAction.equalsIgnoreCase("remove") ) {
+				Markers.unsetMark((Player)sender, args[2]);
+				return true;
 			}
 		}
 		
@@ -95,7 +114,7 @@ public class Waypoints extends JavaPlugin {
 			}
 		}
 
-		player.teleportTo(loc);
+		player.teleport(loc);
 	}
 
 }

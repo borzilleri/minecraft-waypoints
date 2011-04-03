@@ -15,3 +15,5 @@ commands:
            /<command> gate <name> - Travel to the specified gate.
            /<command> gate activate <name> - Activate a gate with the specified name.
            /<command> gate remove
+           /<command> track <name> - Track the specified point.
+           /<command> mark set <name> - Set a marker with the given name.

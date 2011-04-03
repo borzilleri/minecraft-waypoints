@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
  */
 public class Homes {
 	public final static int WARP_DELAY = 15;
-	private static HashMap<String,Warp> homeList;
-	protected static int[] homePointStart = new int[] {0,1,1};
-	protected static Material[][][] homePointPattern = new Material[][][] {
+	private static HashMap<String,Warp> markerList;
+	protected static int[] markerPointStart = new int[] {0,1,1};
+	protected static Material[][][] markerPointPattern = new Material[][][] {
 		{
 			{Material.GLASS, Material.GLASS, Material.GLASS},
 			{Material.GLASS, Material.IRON_BLOCK, Material.GLASS},
@@ -22,23 +22,23 @@ public class Homes {
 		}
 	};
 
-	public static void loadHomes() {
+	public static void loadMarkers() {
 		HomeData.initTable();
-		homeList = HomeData.getHomes();
+		markerList = HomeData.getHomes();
 	}
 
 	public static void sendPlayerHome(Player player, boolean debug, boolean override) {
 		// If the player does not have a home point, send them to the spawn.
-		if( !homeList.containsKey(player.getName()) ) {
+		if( !markerList.containsKey(player.getName()) ) {
 			player.sendMessage(ChatColor.GOLD + "*** Returning to Spawn Point ***");
 			Waypoints.warpPlayerTo(player, player.getWorld().getSpawnLocation(), WARP_DELAY);
 			return;
 		}
 
-		Warp home = homeList.get(player.getName());
+		Warp home = markerList.get(player.getName());
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(homePointPattern, homePointStart, home.getLocation(), validator, debug);
+		Structure.parse(markerPointPattern, markerPointStart, home.getLocation(), validator, debug);
 
 		if( 0 < validator.invalidBlockCount ) {
 			player.sendMessage(ChatColor.RED+"ERROR: Home point is invalid.");
@@ -56,18 +56,18 @@ public class Homes {
 	}
 
 	public static boolean setHomePoint(Player player) {
-		if( homeList.containsKey(player.getName()) ) {
+		if( markerList.containsKey(player.getName()) ) {
 			player.sendMessage(ChatColor.RED+"Error: Home Point already active.");
 			return false;
 		}
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(homePointPattern, homePointStart, player.getLocation(), validator,true);
+		Structure.parse(markerPointPattern, markerPointStart, player.getLocation(), validator,true);
 
 		if( 0 >= validator.invalidBlockCount ) {
 			Warp home = new Warp(player.getName(), player, Waypoint.HOME);
 			if( HomeData.addHome(home) ) {
-				homeList.put(player.getName(), home);
+				markerList.put(player.getName(), home);
 				player.sendMessage(ChatColor.GOLD+"*** Activating Home Point ***");
 				return true;
 			}
@@ -83,16 +83,16 @@ public class Homes {
 	}
 
 	public static boolean unsetHomePoint(Player player) {
-		if( !homeList.containsKey(player.getName()) ) {
+		if( !markerList.containsKey(player.getName()) ) {
 			// Player has no active home point.
 			player.sendMessage(ChatColor.RED+"ERROR: No active home point.");
 			return false;
 		}
 
-		Warp home = homeList.get(player.getName());
+		Warp home = markerList.get(player.getName());
 
 		Structure.Validator validator = new Structure.Validator();
-		Structure.parse(homePointPattern, homePointStart, home.getLocation(), validator);
+		Structure.parse(markerPointPattern, markerPointStart, home.getLocation(), validator);
 
 		if( 0 < validator.invalidBlockCount ) {
 			// Player's home point is invalid
@@ -121,10 +121,10 @@ public class Homes {
 				return doBlockAction(structureBlockType, worldBlock);
 			}
 		};
-		Structure.parse(homePointPattern, homePointStart, homeList.get(player.getName()).getLocation(), remover);
+		Structure.parse(markerPointPattern, markerPointStart, markerList.get(player.getName()).getLocation(), remover);
 
 		// Remove home point from the list, and save the list.
-		homeList.remove(player.getName());
+		markerList.remove(player.getName());
 
 		player.sendMessage(ChatColor.GOLD+"*** Deactivating Home Point ***");
 		return true;
