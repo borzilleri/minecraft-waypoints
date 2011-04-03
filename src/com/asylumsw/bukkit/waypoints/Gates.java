@@ -83,10 +83,11 @@ public class Gates {
 		
 		ArrayList<String> gates = new ArrayList<String>();
 		for( Map.Entry<String,Warp> gate : gateList.entrySet() ) {
-			if( gate.getValue().getOwnerName().equalsIgnoreCase(playerName) ||
-					sender.isOp() ||
-					( gateAccess.containsKey(playerName) && gateAccess.get(playerName).contains(gate.getKey())) ) {
+			if( gateAccess.containsKey(playerName) && gateAccess.get(playerName).contains(gate.getKey()) ) {
 				gates.add(gate.getKey());
+			}
+			else if( sender.isOp() ) {
+				gates.add(gate.getKey()+"*");
 			}
 		}
 		
@@ -103,9 +104,9 @@ public class Gates {
 				sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg);
 				msg = "";
 			}
-			msg += ChatColor.AQUA + gate + ChatColor.GRAY + ",";
+			msg += ChatColor.AQUA + gate + ChatColor.GRAY + ", ";
 		}
-		sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg);
+		sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg.substring(0, msg.length()-2));
 	}
 
 	public static boolean playerHasGateAccess(Player player, String gateName) {
