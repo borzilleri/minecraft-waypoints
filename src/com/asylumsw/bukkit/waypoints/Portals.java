@@ -27,5 +27,4 @@ public class Portals {
 		return false;
 	}
 
-
 }

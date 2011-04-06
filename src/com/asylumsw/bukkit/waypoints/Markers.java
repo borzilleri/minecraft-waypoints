@@ -1,6 +1,9 @@
 package com.asylumsw.bukkit.waypoints;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -30,22 +33,57 @@ public class Markers {
 		}
 	};
 
-	public static void loadMarkers() {
+	public static void load() {
 		MarkerData.initTable();
 		markerList = MarkerData.getMarkers();
 	}
 
+	public static void list(CommandSender sender, String player) {
+		ArrayList<String> markers = new ArrayList<String>();
+
+		for(Map.Entry<String,Warp> mark : markerList.entrySet() ) {
+			if( mark.getValue().getOwnerName().equalsIgnoreCase(player) ) {
+				markers.add(mark.getKey());
+			}
+		}
+
+		Collections.sort(markers);
+		String msg = ChatColor.GRAY+"Known Markers: ";
+		for( String gate : markers ) {
+			if( msg.length() >= 40 ) {
+				sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg);
+				msg = "";
+			}
+			msg += ChatColor.AQUA + gate + ChatColor.GRAY + ", ";
+		}
+		sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg.substring(0, msg.length()-2));
+
+	}
+
+	public static boolean track(Player player, String name) {
+		if( markerList.containsKey(name) ) {
+			player.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+							ChatColor.GOLD+"*** Setting Compass target to marker: "+name+" ***");
+			player.setCompassTarget(markerList.get(name).getLocation());
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean setMark(Player player, String markerName) {
 		if (markerName.equalsIgnoreCase("home")) {
-			player.sendMessage(ChatColor.RED + "Error: Name 'home' is reserved.");
+			player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED + "Error: Name 'home' is reserved.");
 			return false;
 		}
 		if (markerName.equalsIgnoreCase("reset")) {
-			player.sendMessage(ChatColor.RED + "Error: Name 'reset' is reserved.");
+			player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED + "Error: Name 'reset' is reserved.");
 			return false;
 		}
 		if( Gates.gateExists(markerName) || markerList.containsKey(markerName) ) {
-			player.sendMessage(ChatColor.RED+"Error: Name '"+markerName+"' is in use.");
+			player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED+"Error: Name '"+markerName+"' is in use.");
 			return false;
 		}
 
@@ -67,15 +105,18 @@ public class Markers {
 			//if( MarkerData.addMarker(mark) ) {
 			if( true ) {
 				//markerList.put(markerName, mark);
-				player.sendMessage(ChatColor.GOLD+"*** Setting Marker: '"+markerName+"' ***");
+				player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+								ChatColor.GOLD+"*** Setting Marker: '"+markerName+"' ***");
 				return true;
 			}
 			else {
-				player.sendMessage(ChatColor.RED+"ERROR: Error occured saving marker.");
+				player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+								ChatColor.RED+"ERROR: Error occured saving marker.");
 			}
 		}
 		else {
-			player.sendMessage(ChatColor.RED+"ERROR: Marker is invalid.");
+			player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED+"ERROR: Marker is invalid.");
 		}
 
 		return false;
@@ -83,7 +124,8 @@ public class Markers {
 
 	public static boolean unsetMark(CommandSender sender, String markerName) {
 		if( !markerList.containsKey(markerName) ) {
-			sender.sendMessage(ChatColor.RED+"ERROR: No active marker named '"+markerName+"'.");
+			sender.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED+"ERROR: No active marker named '"+markerName+"'.");
 			return false;
 		}
 		Warp mark = markerList.get(markerName);
@@ -102,11 +144,13 @@ public class Markers {
 		}
 
 		if( !MarkerData.deleteMarker(mark.getName()) ) {
-			sender.sendMessage(ChatColor.RED+"ERROR: An error occured removing marker '"+markerName+"'.");
+			sender.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+							ChatColor.RED+"ERROR: An error occured removing marker '"+markerName+"'.");
 			return false;
 		}
 		
-		sender.sendMessage(ChatColor.GOLD+"*** Removing marker '"+markerName+"'. ***");
+		sender.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
+						ChatColor.GOLD+"*** Removing marker '"+markerName+"'. ***");
 		return true;
 	}
 }

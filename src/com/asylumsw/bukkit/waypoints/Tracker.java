@@ -41,8 +41,9 @@ public class Tracker {
 			return true;
 		}
 
-		// TODO: Suppor tracking Marker points.
-
+		if( Markers.track(player, name) ) {
+			return true;
+		}
 
 		player.sendMessage(ChatColor.RED+"ERROR: Unknown marker: "+name);
 		return false;

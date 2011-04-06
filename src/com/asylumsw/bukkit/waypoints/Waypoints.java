@@ -23,7 +23,7 @@ public class Waypoints extends JavaPlugin {
 		serverInstance = this.getServer();
 		Homes.load();
 		Gates.load();
-		Markers.loadMarkers();
+		Markers.load();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
@@ -84,6 +84,21 @@ public class Waypoints extends JavaPlugin {
 				}
 				Gates.activateGate((Player) sender, args[2]);
 			}
+			else if (gateAction.equalsIgnoreCase("check") ) {
+				if( !(sender instanceof Player) ) {
+					sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+									ChatColor.RED+"ERROR: This command only available to players.");
+				}
+				else if(!Gates.isValidGateLocation(((Player) sender).getLocation())) {
+					sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+									ChatColor.RED+"ERROR: Gates must be "+
+									Gates.GATE_DISTANCE_MINIMUM+" blocks from any other gate.");
+				}
+				else {
+					sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+									ChatColor.GOLD+"* Valid Gate Location.");
+				}
+			}
 			else {
 				Gates.sendPlayerToGate((Player) sender, gateAction);
 			}
@@ -99,13 +114,37 @@ public class Waypoints extends JavaPlugin {
 			}
 			return true;
 		}
-		else if (action.equalsIgnoreCase("mark") && 3 <= args.length) {
+		else if (action.equalsIgnoreCase("marker") && 2 <= args.length) {
 			String markAction = args[1];
 
-			if (markAction.equalsIgnoreCase("set")) {
+			if( markAction.equalsIgnoreCase("list") ) {
+				String playerName = null;
+				if( !(sender instanceof Player) && !sender.isOp() ) {
+					sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+									ChatColor.RED+"ERROR: This command is only available to players and admins");
+					return true;
+				}
+
+				if( sender.isOp() && 3 <= args.length ) {
+					playerName = args[2];
+				}
+				else if( sender.isOp() && !(sender instanceof Player) ) {
+					playerName = null;
+				}
+				else {
+					playerName = ((Player)sender).getName();
+				}
+				
+				Markers.list(sender, playerName);
+			}
+			else if(markAction.equalsIgnoreCase("set")) {
 				if (!(sender instanceof Player)) {
 					sender.sendMessage(ChatColor.GRAY + "[wp] "
 									+ ChatColor.RED + "ERROR: This command is available only to players.");
+				}
+				else if( 3 > args.length ) {
+					sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+									ChatColor.RED+"ERROR: You must specify a marker name.");
 				}
 				else {
 					Markers.setMark((Player) sender, args[2]);
@@ -113,7 +152,13 @@ public class Waypoints extends JavaPlugin {
 				return true;
 			}
 			else if (markAction.equalsIgnoreCase("remove")) {
-				Markers.unsetMark(sender, args[2]);
+				if( 3 > args.length ) {
+					sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+
+									ChatColor.RED+"ERROR: You must specify a marker name.");
+				}
+				else {
+					Markers.unsetMark(sender, args[2]);
+				}
 				return true;
 			}
 		}

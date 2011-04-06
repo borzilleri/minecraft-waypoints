@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
  */
 public class Gates {
 	public final static int WARP_DELAY = 5;
-	private final static int GATE_DISTANCE_MINIMUM = 1000;
+	public final static int GATE_DISTANCE_MINIMUM = 1000;
 
 	public static boolean debug = false;
 	public static boolean override = false;
@@ -190,6 +190,16 @@ public class Gates {
 		}
 	}
 
+	public static boolean isValidGateLocation(Location loc) {
+		for( Map.Entry<String,Warp> gatePoint : gateList.entrySet() ) {
+			int distanceFromLoc = (int)Math.floor(loc.toVector().distance(gatePoint.getValue().getLocation().toVector()));
+			if( GATE_DISTANCE_MINIMUM > distanceFromLoc ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static boolean activateGate(Player player, String gateName) {
 		if (gateName.equalsIgnoreCase("home")) {
 			player.sendMessage(ChatColor.RED + "Error: Gate name 'home' is reserved.");
@@ -199,6 +209,15 @@ public class Gates {
 			player.sendMessage(ChatColor.RED + "Error: Gate name 'reset' is reserved.");
 			return false;
 		}
+		if (gateName.equalsIgnoreCase("activate")) {
+			player.sendMessage(ChatColor.RED + "Error: Gate name 'activate' is reserved.");
+			return false;
+		}
+		if (gateName.equalsIgnoreCase("remove")) {
+			player.sendMessage(ChatColor.RED + "Error: Gate name 'remove' is reserved.");
+			return false;
+		}
+
 
 		Location loc;
 		Warp gate = gateList.containsKey(gateName) ? gateList.get(gateName) : null;
@@ -234,12 +253,8 @@ public class Gates {
 		gate = new Warp(gateName, player, Waypoint.GATE);
 		gate.setOwner(player);
 
-		for( Map.Entry<String,Warp> gatePoint : gateList.entrySet() ) {
-			if( GATE_DISTANCE_MINIMUM > gate.distanceFromLocation(gatePoint.getValue().getLocation()) ) {
-				player.sendMessage(ChatColor.RED+"ERROR: Gates must be "+GATE_DISTANCE_MINIMUM
-								+" blocks from any other gate.");
-				return false;
-			}
+		if( !isValidGateLocation(gate.getLocation()) ) {
+			return false;
 		}
 
 		if (GateData.addGate(gate)) {
