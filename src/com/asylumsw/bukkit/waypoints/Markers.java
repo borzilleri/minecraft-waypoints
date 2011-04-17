@@ -42,19 +42,19 @@ public class Markers {
 		ArrayList<String> markers = new ArrayList<String>();
 
 		for(Map.Entry<String,Warp> mark : markerList.entrySet() ) {
-			if( mark.getValue().getOwnerName().equalsIgnoreCase(player) ) {
+			if( null == player || player.equalsIgnoreCase(mark.getValue().getOwnerName())) {
 				markers.add(mark.getKey());
 			}
 		}
 
 		Collections.sort(markers);
 		String msg = ChatColor.GRAY+"Known Markers: ";
-		for( String gate : markers ) {
+		for( String mark : markers ) {
 			if( msg.length() >= 40 ) {
 				sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg);
 				msg = "";
 			}
-			msg += ChatColor.AQUA + gate + ChatColor.GRAY + ", ";
+			msg += ChatColor.AQUA+mark+ChatColor.GRAY + ", ";
 		}
 		sender.sendMessage(ChatColor.DARK_GRAY+"[wp] "+msg.substring(0, msg.length()-2));
 
@@ -102,9 +102,8 @@ public class Markers {
 			Warp mark = new Warp(markerName, player.getLocation(), Waypoint.MARKER);
 			mark.setOwner(player);
 
-			//if( MarkerData.addMarker(mark) ) {
-			if( true ) {
-				//markerList.put(markerName, mark);
+			if( MarkerData.addMarker(mark) ) {
+				markerList.put(markerName, mark);
 				player.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
 								ChatColor.GOLD+"*** Setting Marker: '"+markerName+"' ***");
 				return true;
@@ -148,7 +147,8 @@ public class Markers {
 							ChatColor.RED+"ERROR: An error occured removing marker '"+markerName+"'.");
 			return false;
 		}
-		
+
+		markerList.remove(mark.getName());
 		sender.sendMessage(ChatColor.DARK_GRAY+"[wp]"+
 						ChatColor.GOLD+"*** Removing marker '"+markerName+"'. ***");
 		return true;

@@ -9,6 +9,7 @@ import org.bukkit.World;
  * @author jonathan
  */
 public class Warp {
+	public static Waypoints plugin;
 	public final static int DEFAULT_DELAY = 20;
 
 	private Waypoint type;
@@ -87,7 +88,12 @@ public class Warp {
 				break;
 		}
 		Location loc = new Location(Waypoints.serverInstance.getWorld(world), x, y, z, yaw, pitch);
-		Waypoints.warpPlayerTo(player, loc, delay);
+		Warp.warpPlayerTo(player, loc, delay);
+	}
+
+	public static void warpPlayerTo(Player player, Location loc, int delay) {
+		Teleporter.TeleportJob tpJob = new Teleporter.TeleportJob(player, loc, delay);
+		Teleporter.scheduleTeleport(tpJob);
 	}
 
 	public Location getLocation() {

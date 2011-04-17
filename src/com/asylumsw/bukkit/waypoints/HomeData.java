@@ -54,10 +54,11 @@ public class HomeData {
 			}
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[MYWARP]: Warp Load Exception");
+			log.log(Level.SEVERE, "[WP:HOMES]: Load exception.");
+			log.log(Level.INFO, ex.getMessage());
 		}
 		catch (ClassNotFoundException e) {
-			log.log(Level.SEVERE, "[MYWARP]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:HOMES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -72,7 +73,7 @@ public class HomeData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[MYWARP]: Warp Load Exception (on close)");
+				log.log(Level.SEVERE, "[WP:HOMES]: Load Exception (on close)");
 			}
 		}
 		return homeList;
@@ -91,12 +92,12 @@ public class HomeData {
 		}
 		catch (SQLException ex) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Table Check Exception");
+			log.log(Level.SEVERE, "[WP:HOMES]: Table check exception");
 			return false;
 		}
 		catch (ClassNotFoundException ex2) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Class Not Found Exception");
+			log.log(Level.SEVERE, "[WP:HOMES]: Class Not Found Exception");
 			return false;
 		}
 		finally {
@@ -110,7 +111,7 @@ public class HomeData {
 			}
 			catch (SQLException ex) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Table Check Exception (on closing)");
+				log.log(Level.SEVERE, "[WP:HOMES]: Table Check Exception (on closing)");
 			}
 		}
 	}
@@ -126,11 +127,11 @@ public class HomeData {
 		}
 		catch (SQLException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Create Table Exception", e);
+			log.log(Level.SEVERE, "[WP:HOMES]: Create Table Exception", e);
 		}
 		catch (ClassNotFoundException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:HOMES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -143,7 +144,7 @@ public class HomeData {
 			}
 			catch (SQLException e) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Could not create the table (on close)");
+				log.log(Level.SEVERE, "[WP:HOMES]: Could not create the table (on close)");
 			}
 		}
 	}
@@ -170,10 +171,10 @@ public class HomeData {
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Warp Insert Exception", ex);
+			log.log(Level.SEVERE, "[WP:HOMES]: Warp Insert Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:HOMES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -185,7 +186,7 @@ public class HomeData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:HOMES]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:HOMES]: Warp Insert Exception (on close)", ex);
 
 			}
 		}
@@ -207,10 +208,10 @@ public class HomeData {
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:HOME]: Warp Insert Exception", ex);
+			log.log(Level.SEVERE, "[WP:HOMES]: Warp Delete Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:HOMES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -222,7 +223,7 @@ public class HomeData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:HOMES]: Warp Insert Exception (on close)", ex);
 			}
 		}
 		return success;

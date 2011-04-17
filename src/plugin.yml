@@ -1,21 +1,28 @@
 name: Waypoints
 main: com.asylumsw.bukkit.waypoints.Waypoints
-version: 2.0
+version: 2.5
 author: Jonathan Borzilleri
 description: >
              Provides teleportation services.
 commands:
-  wp:
-    description: Access to all waypoint commands.
+  home:
+    description: Teleport to and manage your home point.
     usage: |
-           /<command> home activate - Activate your home point.
-           /<command> home remove - Remove your home point.
-           /<command> home - Teleport to your home point.
-           /<command> gate list - List gates you have access to.
-           /<command> gate <name> - Travel to the specified gate.
-           /<command> gate activate <name> - Activate a gate with the specified name.
-           /<command> gate remove - NYI
-           /<command> gate check - Check to see if your current location can hold a gate.
+           /<command> - Teleport to your home point.
+           /<command> activate - Activate your home point.
+           /<command> remove - Deactivate your home point.
+  gate:
+    description: Gate related commands
+    usage: |
+           /<command> <name> - Teleport to the specified gate.
+           /<command> list - List gates you have access to.
+           /<command> check - Check to see if your current location can have a gate.
+           /<command> activate <name> - Activate a gate with the specified name.
+           /<command> remove - Deactivate a gate you own.
+           /<command> rename <old> <new> - Rename a gate you own.
+  wp:
+    description: Access to other waypoint commands.
+    usage: |
            /<command> track <name> - Track the specified point.
            /<command> marker list - List your markers.
            /<command> marker set <name> - Set a marker with the given name.

@@ -70,11 +70,11 @@ public class GateData {
 		}
 		catch (SQLException ex) {
 			log.log(Level.SEVERE, 
-							String.format("[WAYPOINTS:GATES]: Activation Load Exception: %s", ex.getMessage()),
+							String.format("[WP:GATES]: Activation Load Exception: %s", ex.getMessage()),
 							ex.getCause());
 		}
 		catch (ClassNotFoundException e) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -89,7 +89,7 @@ public class GateData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Activation Load Exception (on close)");
+				log.log(Level.SEVERE, "[WP:GATES]: Activation Load Exception (on close)");
 			}
 		}
 
@@ -119,10 +119,10 @@ public class GateData {
 		}
 		catch (SQLException ex) {
 			log.log(Level.SEVERE,
-							String.format("[WAYPOINTS:GATES]: Gate Load Exception: %s", ex.getMessage()),
+							String.format("[WP:GATES]: Gate Load Exception: %s", ex.getMessage()),
 							ex.getCause());		}
 		catch (ClassNotFoundException e) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -137,7 +137,7 @@ public class GateData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Gate Load Exception (on close)");
+				log.log(Level.SEVERE, "[WP:GATES]: Gate Load Exception (on close)");
 			}
 		}
 		return gateList;
@@ -156,12 +156,12 @@ public class GateData {
 		}
 		catch (SQLException ex) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Table Check Exception: {0}", tableName);
+			log.log(Level.SEVERE, "[WP:GATES]: Table Check Exception: {0}", tableName);
 			return false;
 		}
 		catch (ClassNotFoundException ex2) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Class Not Found Exception");
+			log.log(Level.SEVERE, "[WP:GATES]: Class Not Found Exception");
 			return false;
 		}
 		finally {
@@ -175,7 +175,7 @@ public class GateData {
 			}
 			catch (SQLException ex) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Table Check Exception (on closing)");
+				log.log(Level.SEVERE, "[WP:GATES]: Table Check Exception (on closing)");
 			}
 		}
 	}
@@ -191,11 +191,11 @@ public class GateData {
 		}
 		catch (SQLException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Create Table Exception", e);
+			log.log(Level.SEVERE, "[WP:GATES]: Create Table Exception", e);
 		}
 		catch (ClassNotFoundException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -208,7 +208,7 @@ public class GateData {
 			}
 			catch (SQLException e) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Could not create the table (on close)");
+				log.log(Level.SEVERE, "[WP:GATES]: Could not create the table (on close)");
 			}
 		}
 	}
@@ -229,10 +229,10 @@ public class GateData {
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Warp Insert Exception: {0}", ex.getMessage());
+			log.log(Level.SEVERE, "[WP:GATES]: Warp Insert Exception: {0}", ex.getMessage());
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -240,7 +240,7 @@ public class GateData {
 				if (conn != null) conn.close();
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:GATES]: Warp Insert Exception (on close)", ex);
 			}
 		}
 		return success;
@@ -269,10 +269,10 @@ public class GateData {
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Warp Insert Exception", ex);
+			log.log(Level.SEVERE, "[WP:GATES]: Warp Insert Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -284,7 +284,7 @@ public class GateData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:GATES]: Warp Insert Exception (on close)", ex);
 
 			}
 		}
@@ -292,24 +292,26 @@ public class GateData {
 		return success;
 	}
 
-	public static boolean deleteGate(String playerName) {
+	public static boolean renameGate(String oldName, String newName) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		Logger log = Logger.getLogger("Minecraft");
 		boolean success = false;
+
 		try {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection(Waypoints.DATABASE);
-			ps = conn.prepareStatement("DELETE FROM gateList WHERE player = ?");
-			ps.setString(1, playerName);
+			ps = conn.prepareStatement("UPDATE gateList SET name=? WHERE name=?");
+			ps.setString(1, newName);
+			ps.setString(2, oldName);
 			ps.executeUpdate();
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Warp Delete Exception", ex);
+			log.log(Level.SEVERE, "[WP:GATES]: Rename Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -321,9 +323,75 @@ public class GateData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:GATES]: Warp Delete Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:GATES]: Rename Exception (on close)", ex);
 			}
 		}
+		return success;
+	}
+
+	public static boolean deleteGate(String gateName) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		Logger log = Logger.getLogger("Minecraft");
+		boolean success = false;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			conn = DriverManager.getConnection(Waypoints.DATABASE);
+			ps = conn.prepareStatement("DELETE FROM gateActivations WHERE gate_id in (SELECT id FROM gateList WHERE name=?)");
+			ps.setString(1, gateName);
+			ps.executeUpdate();
+			success = true;
+		}
+		catch (SQLException ex) {
+			log.log(Level.SEVERE, "[WP:GATES]: Activation Delete Exception", ex);
+		}
+		catch (ClassNotFoundException ex2) {
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
+		}
+		finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			}
+			catch (SQLException ex) {
+				log.log(Level.SEVERE, "[WP:GATES]: Activation Delete Exception (on close)", ex);
+			}
+		}
+		if( !success ) return false;
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			conn = DriverManager.getConnection(Waypoints.DATABASE);
+			ps = conn.prepareStatement("DELETE FROM gateList WHERE name=?");
+			ps.setString(1, gateName);
+			ps.executeUpdate();
+			success = true;
+		}
+		catch (SQLException ex) {
+			log.log(Level.SEVERE, "[WP:GATES]: Warp Delete Exception", ex);
+		}
+		catch (ClassNotFoundException ex2) {
+			log.log(Level.SEVERE, "[WP:GATES]: Error loading org.sqlite.JDBC");
+		}
+		finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			}
+			catch (SQLException ex) {
+				log.log(Level.SEVERE, "[WP:GATES]: Warp Delete Exception (on close)", ex);
+			}
+		}
+
 		return success;
 	}
 }

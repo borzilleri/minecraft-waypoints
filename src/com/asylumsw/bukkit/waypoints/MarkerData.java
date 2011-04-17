@@ -42,7 +42,7 @@ public class MarkerData {
 			conn = DriverManager.getConnection(Waypoints.DATABASE);
 
 			statement = conn.createStatement();
-			set = statement.executeQuery("SELECT player,x,y,z,world FROM markerList");
+			set = statement.executeQuery("SELECT player,name,x,y,z,world FROM markerList");
 			while (set.next()) {
 				String name = set.getString("name");
 				Warp mark = new Warp(name, set.getInt("x"), set.getInt("y"),
@@ -52,10 +52,10 @@ public class MarkerData {
 			}
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[MYWARP]: Warp Load Exception");
+			log.log(Level.SEVERE, "[WP:MARKER]: Warp Load Exception");
 		}
 		catch (ClassNotFoundException e) {
-			log.log(Level.SEVERE, "[MYWARP]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:MARKER]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -70,7 +70,7 @@ public class MarkerData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[MYWARP]: Warp Load Exception (on close)");
+				log.log(Level.SEVERE, "[WP:MARKER]: Warp Load Exception (on close)");
 			}
 		}
 		return markerList;
@@ -89,12 +89,12 @@ public class MarkerData {
 		}
 		catch (SQLException ex) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Table Check Exception");
+			log.log(Level.SEVERE, "[WP:MARKER]: Table Check Exception");
 			return false;
 		}
 		catch (ClassNotFoundException ex2) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Class Not Found Exception");
+			log.log(Level.SEVERE, "[WP:MARKER]: Class Not Found Exception");
 			return false;
 		}
 		finally {
@@ -108,7 +108,7 @@ public class MarkerData {
 			}
 			catch (SQLException ex) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Table Check Exception (on closing)");
+				log.log(Level.SEVERE, "[WP:MARKER]: Table Check Exception (on closing)");
 			}
 		}
 	}
@@ -124,11 +124,11 @@ public class MarkerData {
 		}
 		catch (SQLException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Create Table Exception", e);
+			log.log(Level.SEVERE, "[WP:MARKER]: Create Table Exception", e);
 		}
 		catch (ClassNotFoundException e) {
 			Logger log = Logger.getLogger("Minecraft");
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:MARKER]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -141,7 +141,7 @@ public class MarkerData {
 			}
 			catch (SQLException e) {
 				Logger log = Logger.getLogger("Minecraft");
-				log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Could not create the table (on close)");
+				log.log(Level.SEVERE, "[WP:MARKER]: Could not create the table (on close)");
 			}
 		}
 	}
@@ -167,10 +167,10 @@ public class MarkerData {
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Warp Insert Exception", ex);
+			log.log(Level.SEVERE, "[WP:MARKER]: Warp Insert Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:MARKER]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -182,7 +182,7 @@ public class MarkerData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:MARKER]: Warp Insert Exception (on close)", ex);
 
 			}
 		}
@@ -204,10 +204,10 @@ public class MarkerData {
 			success = true;
 		}
 		catch (SQLException ex) {
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Warp Insert Exception", ex);
+			log.log(Level.SEVERE, "[WP:MARKER]: Warp Insert Exception", ex);
 		}
 		catch (ClassNotFoundException ex2) {
-			log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Error loading org.sqlite.JDBC");
+			log.log(Level.SEVERE, "[WP:MARKER]: Error loading org.sqlite.JDBC");
 		}
 		finally {
 			try {
@@ -219,7 +219,7 @@ public class MarkerData {
 				}
 			}
 			catch (SQLException ex) {
-				log.log(Level.SEVERE, "[WAYPOINTS:MARKERS]: Warp Insert Exception (on close)", ex);
+				log.log(Level.SEVERE, "[WP:MARKER]: Warp Insert Exception (on close)", ex);
 			}
 		}
 		return success;

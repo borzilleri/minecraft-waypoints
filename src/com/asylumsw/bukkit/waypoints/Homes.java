@@ -45,7 +45,7 @@ public class Homes {
 		// If the player does not have a home point, send them to the spawn.
 		if( !homeList.containsKey(player.getName()) ) {
 			player.sendMessage(ChatColor.GOLD + "*** Returning to Spawn Point ***");
-			Waypoints.warpPlayerTo(player, player.getWorld().getSpawnLocation(), WARP_DELAY);
+			Warp.warpPlayerTo(player, player.getWorld().getSpawnLocation(), WARP_DELAY);
 			return;
 		}
 
