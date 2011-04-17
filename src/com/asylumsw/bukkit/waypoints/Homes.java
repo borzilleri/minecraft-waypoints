@@ -172,12 +172,11 @@ public class Homes {
 		}
 	}
 
-	public static boolean blockIsPartOfHomepoint(Block block, Player player) {
+	public static boolean blockIsPartOfHomepoint(Block block) {
 		for( Map.Entry<String, Warp> home : homeList.entrySet() ) {
 			BlockFinder finder = new BlockFinder(block);
 			Structure.parse(homePointPattern, homePointStart, home.getValue().getLocation(), finder);
 			if( finder.blockFound ) return true;
-			return finder.blockFound;
 		}
 		return false;
 	}

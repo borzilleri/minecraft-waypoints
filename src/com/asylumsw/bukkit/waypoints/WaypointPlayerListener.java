@@ -19,7 +19,7 @@ public class WaypointPlayerListener extends PlayerListener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if( event.isCancelled() ) return;
 
-		if( Homes.blockIsPartOfHomepoint(event.getClickedBlock(), event.getPlayer()) ) {
+		if( Homes.blockIsPartOfHomepoint(event.getClickedBlock()) ) {
 			event.setCancelled(true);
 		}		
 	}

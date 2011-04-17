@@ -18,7 +18,7 @@ public class WaypointBlockListener extends BlockListener {
 	public void onBlockDamage(BlockDamageEvent event) {
 		if( event.isCancelled() ) return;
 		
-		if( Homes.blockIsPartOfHomepoint(event.getBlock(), event.getPlayer()) ) {
+		if( Homes.blockIsPartOfHomepoint(event.getBlock()) ) {
 			event.setCancelled(true);
 		}
 	}
