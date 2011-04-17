@@ -6,14 +6,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.PluginManager;
 
 /**
  *
  * @author jonathan
  */
 public class Waypoints extends JavaPlugin {
+	private WaypointPlayerListener playerListener = new WaypointPlayerListener(this);
+	private WaypointBlockListener blockListener = new WaypointBlockListener(this);
 
 	public static Server serverInstance;
 	public final static String DATABASE = "jdbc:sqlite:waypoints.db";
@@ -30,6 +33,10 @@ public class Waypoints extends JavaPlugin {
 		Homes.load();
 		Gates.load();
 		Markers.load();
+
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Highest, this);
+		pm.registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Event.Priority.Highest, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
